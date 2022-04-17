@@ -12,8 +12,9 @@ import java.util.Date;
 
 @Slf4j
 public class JwtAuthToken implements AuthToken<Claims> {
-    @Getter
+
     private final Key key;
+    @Getter
     private final String token;
 
     private static final String AUTHORITIES_KEY = "role";

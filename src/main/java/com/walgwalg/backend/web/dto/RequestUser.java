@@ -18,4 +18,12 @@ public class RequestUser {
         @NotEmpty(message = "주소가 비어있음")
         private String address;
     }
+    @Builder
+    @Data
+    public static class login{
+        @NotEmpty(message = "아이디가 비어있음")
+        private String userid;
+        @NotEmpty(message = "비밀번호가 비어있음")
+        private String password;
+    }
 }

@@ -7,7 +7,7 @@ import java.util.Arrays;
 @Getter
 public enum Role {
     ADMIN("ROLE_ADMIN","관리자 권한"),
-    MEMBER("ROLE_USER", "회원 권한"),
+    USER("ROLE_USER", "회원 권한"),
     UNKNOWN("UNKNOWN","알 수 없는 권한");
 
     private String code;
