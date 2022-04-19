@@ -26,4 +26,12 @@ public class RequestUser {
         @NotEmpty(message = "비밀번호가 비어있음")
         private String password;
     }
+
+    @Builder
+    @Data
+    public static class changeInfo{
+        private String password;
+        private String nickname;
+        private String address;
+    }
 }

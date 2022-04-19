@@ -4,6 +4,7 @@ import com.walgwalg.backend.core.security.role.Role;
 import com.walgwalg.backend.core.service.UserServiceInterface;
 import com.walgwalg.backend.entity.User;
 import com.walgwalg.backend.exception.errors.LoginFailedException;
+import com.walgwalg.backend.exception.errors.NotFoundUserException;
 import com.walgwalg.backend.exception.errors.RegisterFailedException;
 import com.walgwalg.backend.provider.security.JwtAuthToken;
 import com.walgwalg.backend.provider.security.JwtAuthTokenProvider;
@@ -79,6 +80,25 @@ public class UserService implements UserServiceInterface {
 
         return Optional.ofNullable(login);
     }
+    @Override
+    @Transactional
+    public void changeUserInfo(String userid, RequestUser.changeInfo changeInfoDto){
+        User user = userRepository.findByUserid(userid);
+        if(user == null){//유저 정보가 없을 경우
+            throw new NotFoundUserException();
+        }
+        User user1 =userRepository.findByNickname(changeInfoDto.getNickname());
+        if(user1 != null && !user.equals(user1)){//닉네임 중복
+            throw new RegisterFailedException();
+        }
+        //salt생성
+        String salt = SHA256Util.generateSalt();
+        //비밀번호 암호화
+        String encryptedPassword = SHA256Util.getEncrypt(changeInfoDto.getPassword(),salt);
+        //유저 정보 수정
+        user.changeUserInfo(encryptedPassword,changeInfoDto.getNickname(),changeInfoDto.getAddress(),salt);
+    }
+
     @Override
     public String createAccessToken(String userid) {
         //유효기간 설정-2분

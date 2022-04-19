@@ -44,4 +44,10 @@ public class User {
     public void changeRefreshToken(String refreshToken){
         this.refreshToken = refreshToken;
     };
+    public void changeUserInfo(String password, String nickname, String address, String salt){
+        this.password = password;
+        this.nickname = nickname;
+        this.address = address;
+        this.salt = salt;
+    }
 }

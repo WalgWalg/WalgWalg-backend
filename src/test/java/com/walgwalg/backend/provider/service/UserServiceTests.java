@@ -2,6 +2,7 @@ package com.walgwalg.backend.provider.service;
 
 import com.walgwalg.backend.entity.User;
 import com.walgwalg.backend.exception.errors.LoginFailedException;
+import com.walgwalg.backend.exception.errors.NotFoundUserException;
 import com.walgwalg.backend.exception.errors.RegisterFailedException;
 import com.walgwalg.backend.repository.UserRepository;
 import com.walgwalg.backend.web.dto.RequestUser;
@@ -131,5 +132,60 @@ public class UserServiceTests {
 
         assertNotNull(response.getAccessToken());
         assertNotNull(response.getRefreshToken());
+    }
+    @Test
+    @Transactional
+    @DisplayName("회원정보 수정 테스트(실패- 회원 정보가 없음)")
+    void ChangeUserInfoWhenNotExistUserTest(){
+        RequestUser.changeInfo changeInfoDto = RequestUser.changeInfo.builder()
+                .nickname("hello")
+                .build();
+        System.out.println("회원정보 수정 테스트(실패- 회원 정보가 없음)");
+        assertThrows(NotFoundUserException.class,()->userService.changeUserInfo("test",changeInfoDto));
+    }
+    @Test
+    @Transactional
+    @DisplayName("회원정보 수정 테스트(실패- 닉네임 중복)")
+    void ChangeUserInfoWhenWhenDuplicatedNicknameTest(){
+        User user = User.builder()
+                .userid("userid")
+                .password("test")
+                .nickname("nick")
+                .build();
+        userRepository.save(user);
+        User user1 = User.builder()
+                .userid("userid1")
+                .password("test1")
+                .nickname("nick1")
+                .build();
+        userRepository.save(user1);
+        //회원정보 변경
+        RequestUser.changeInfo changeInfoDto = RequestUser.changeInfo.builder()
+                .nickname("nick")
+                .build();
+        System.out.println("회원정보 수정 테스트(실패- 닉네임 중복)");
+        assertThrows(RegisterFailedException.class,()->userService.changeUserInfo("userid1",changeInfoDto));
+    }
+    @Test
+    @Transactional
+    @DisplayName("회원정보 수정 테스트(성공)")
+    void ChangeUserInfoTest(){
+        User user = User.builder()
+                .userid("userid")
+                .password("password")
+                .nickname("nick")
+                .address("address")
+                .build();
+        userRepository.save(user);
+        //회원정보 변경
+        RequestUser.changeInfo changeInfoDto = RequestUser.changeInfo.builder()
+                .password("changedpassword")
+                .nickname("changednick")
+                .address("changedaddress")
+                .build();
+        userService.changeUserInfo("userid",changeInfoDto);
+        System.out.println("회원정보 수정 테스트(성공)");
+        User user1 = userRepository.findByUserid("userid");
+        System.out.println(user1.getPassword()+" "+user1.getNickname()+" "+user1.getAddress());
     }
 }

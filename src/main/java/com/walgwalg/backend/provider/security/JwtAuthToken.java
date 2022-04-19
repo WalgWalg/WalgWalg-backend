@@ -26,7 +26,7 @@ public class JwtAuthToken implements AuthToken<Claims> {
     JwtAuthToken(String id, String role, Date expiredDate, Key key){
         this.key = key;
         this.token = Jwts.builder()
-                .setSubject(id) // 토큰 제목
+                .setSubject(id) // 토큰 제목 여기서는 유저 아이디
                 .claim(AUTHORITIES_KEY, role)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .setExpiration(expiredDate)
