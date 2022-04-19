@@ -3,6 +3,7 @@ package com.walgwalg.backend.web;
 import com.walgwalg.backend.entity.User;
 import com.walgwalg.backend.exception.errors.LoginFailedException;
 import com.walgwalg.backend.exception.errors.RegisterFailedException;
+import com.walgwalg.backend.provider.security.JwtAuthToken;
 import com.walgwalg.backend.provider.security.JwtAuthTokenProvider;
 import com.walgwalg.backend.provider.service.UserService;
 import com.walgwalg.backend.repository.UserRepository;
@@ -17,12 +18,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final JwtAuthTokenProvider jwtAuthTokenProvider;
 
     @PostMapping("/user/register")
     public ResponseEntity<ResponseMessage> userRegister(@Valid @RequestBody RequestUser.register registerDto) {
@@ -44,5 +48,20 @@ public class UserController {
                 .list(user)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @PostMapping("/user/changeUserInfo")
+    public ResponseEntity<ResponseMessage> changeUserInfo(HttpServletRequest request, @RequestBody RequestUser.changeInfo changeInfoDto){
+        Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
+        String userid = null;
+        if(token.isPresent()){
+            JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token.get());
+            userid = jwtAuthToken.getClaims().getSubject();
+        }
+        userService.changeUserInfo(userid, changeInfoDto);
+        ResponseMessage response = ResponseMessage.builder()
+                .status(HttpStatus.OK.value())
+                .message("회원정보 수정 성공")
+                .build();
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }
