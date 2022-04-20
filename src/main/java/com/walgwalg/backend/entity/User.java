@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Table(name="user")
 @Entity
@@ -32,6 +34,12 @@ public class User {
 
     @Column(name="refreshToken")
     private String refreshToken;
+
+    @OneToMany(mappedBy = "user")
+    private List<Like> likeList = new ArrayList<>(); //좋아요 리스트
+
+    @OneToMany(mappedBy = "user")
+    private List<Scrap> scrapList = new ArrayList<>(); //스크랩 리스트
 
     @Builder
     public User(String userid, String password, String nickname, String address, String salt){
