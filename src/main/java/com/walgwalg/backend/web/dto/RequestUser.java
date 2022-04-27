@@ -33,5 +33,6 @@ public class RequestUser {
         private String password;
         private String nickname;
         private String address;
+        private String profile_path;
     }
 }
