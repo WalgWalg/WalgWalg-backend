@@ -30,12 +30,16 @@ public class Walk {
     @Column(name="time")
     private String time; //소요시간
 
-    //경로 사진
+    @Column(name = "course")
+    private String course; //산책 코스 사진 경로
 
-    //유저
+    @Column(name="start_location")
+    private String start_location; //시작 위치
 
-    @Column(name="startlocation")
-    private String startlocation; //시작 위치
+    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user; // 유저
 
-    //게시판
+    @OneToOne(mappedBy = "walk")
+    private Board board; //게시판
 }

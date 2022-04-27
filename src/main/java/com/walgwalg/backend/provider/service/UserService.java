@@ -2,12 +2,16 @@ package com.walgwalg.backend.provider.service;
 
 import com.walgwalg.backend.core.security.role.Role;
 import com.walgwalg.backend.core.service.UserServiceInterface;
+import com.walgwalg.backend.entity.Board;
+import com.walgwalg.backend.entity.Likes;
 import com.walgwalg.backend.entity.User;
 import com.walgwalg.backend.exception.errors.LoginFailedException;
 import com.walgwalg.backend.exception.errors.NotFoundUserException;
 import com.walgwalg.backend.exception.errors.RegisterFailedException;
 import com.walgwalg.backend.provider.security.JwtAuthToken;
 import com.walgwalg.backend.provider.security.JwtAuthTokenProvider;
+import com.walgwalg.backend.repository.BoardRepository;
+import com.walgwalg.backend.repository.LikesRepository;
 import com.walgwalg.backend.repository.UserRepository;
 import com.walgwalg.backend.util.SHA256Util;
 import com.walgwalg.backend.web.dto.RequestUser;
@@ -18,13 +22,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserServiceInterface {
     private final UserRepository userRepository;
+    private final LikesRepository likeRepository;
+    private final BoardRepository boardRepository;
     private final JwtAuthTokenProvider jwtAuthTokenProvider;
 
     @Transactional
@@ -98,7 +106,20 @@ public class UserService implements UserServiceInterface {
         //유저 정보 수정
         user.changeUserInfo(encryptedPassword,changeInfoDto.getNickname(),changeInfoDto.getAddress(),salt);
     }
+    @Override
+    @Transactional
+    public List<ResponseUser.MyLike> listLikeBoard(String userid){
+        User user = userRepository.findByUserid(userid); //유저 꺼내기
+        List<Likes> likeList = likeRepository.findByUser(user);//좋아요 리스트 꺼내기
 
+        List<ResponseUser.MyLike> boards =new ArrayList<>();
+        for(Likes likeBoard : likeList){
+            Board board = boardRepository.findByLikes(likeBoard);
+            boards.add(ResponseUser.MyLike.of(board));
+        }
+        //Dto로 변환
+        return boards;
+    }
     @Override
     public String createAccessToken(String userid) {
         //유효기간 설정-2분

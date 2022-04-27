@@ -1,9 +1,13 @@
 package com.walgwalg.backend.provider.service;
 
+import com.walgwalg.backend.entity.Board;
+import com.walgwalg.backend.entity.Likes;
 import com.walgwalg.backend.entity.User;
 import com.walgwalg.backend.exception.errors.LoginFailedException;
 import com.walgwalg.backend.exception.errors.NotFoundUserException;
 import com.walgwalg.backend.exception.errors.RegisterFailedException;
+import com.walgwalg.backend.repository.BoardRepository;
+import com.walgwalg.backend.repository.LikesRepository;
 import com.walgwalg.backend.repository.UserRepository;
 import com.walgwalg.backend.web.dto.RequestUser;
 import com.walgwalg.backend.web.dto.ResponseUser;
@@ -12,6 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -22,6 +28,10 @@ public class UserServiceTests {
     private UserService userService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private BoardRepository boardRepository;
+    @Autowired
+    private LikesRepository likeRepository;
 
     @Test
     @Transactional
@@ -188,4 +198,38 @@ public class UserServiceTests {
         User user1 = userRepository.findByUserid("userid");
         System.out.println(user1.getPassword()+" "+user1.getNickname()+" "+user1.getAddress());
     }
+
+    @Test
+    @Transactional
+    @DisplayName("좋아요 리스트 테스트(성공)")
+    void ListLikeBoardTest(){
+        User user = User.builder()
+                .userid("userid")
+                .password("password")
+                .nickname("nick")
+                .address("address")
+                .build();
+        userRepository.save(user);
+        //게시판
+        Board board = Board.builder()
+                .title("게시판")
+                .build();
+        boardRepository.save(board);
+        Board board1 = Board.builder()
+                .title("게시판1")
+                .build();
+        boardRepository.save(board1);
+
+        //좋아요
+        Likes like = Likes.builder().board(board).user(user).build();
+        likeRepository.save(like);
+        Likes like1 = Likes.builder().board(board1).user(user).build();
+        likeRepository.save(like1);
+        //좋아요 리스트 출력
+        System.out.println("좋아요 리스트");
+        List<ResponseUser.MyLike> list = userService.listLikeBoard("userid");
+        for(ResponseUser.MyLike myLike : list)
+            System.out.println(myLike.getTitle());
+    }
+
 }

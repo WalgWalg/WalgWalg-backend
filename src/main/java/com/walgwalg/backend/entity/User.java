@@ -35,8 +35,17 @@ public class User {
     @Column(name="refreshToken")
     private String refreshToken;
 
+//    @Column(name = "profile")
+//    private String profile; //프로필 사진 경로
+    
     @OneToMany(mappedBy = "user")
-    private List<Like> likeList = new ArrayList<>(); //좋아요 리스트
+    private List<Board> boardList = new ArrayList<>(); //게시판 리스트
+    
+    @OneToMany(mappedBy = "user")
+    private List<Walk> walkList = new ArrayList<>(); // 산책 리스트
+    
+    @OneToMany(mappedBy = "user")
+    private List<Likes> likeList = new ArrayList<>(); //좋아요 리스트
 
     @OneToMany(mappedBy = "user")
     private List<Scrap> scrapList = new ArrayList<>(); //스크랩 리스트
