@@ -1,5 +1,6 @@
 package com.walgwalg.backend.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,4 +22,10 @@ public class Scrap {
     @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user; //스크랩을 누른 유저
+
+    @Builder
+    public Scrap(Board board, User user){
+        this.board = board;
+        this.user = user;
+    }
 }
