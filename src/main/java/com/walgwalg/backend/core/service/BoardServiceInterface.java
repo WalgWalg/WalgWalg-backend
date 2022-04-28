@@ -4,4 +4,5 @@ import com.walgwalg.backend.web.dto.RequestBoard;
 
 public interface BoardServiceInterface {
     void addLike(String userid, RequestBoard.like requestDto);
+    void addScrap(String userid, RequestBoard.scrap requestDto);
 }
