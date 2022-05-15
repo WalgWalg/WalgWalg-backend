@@ -16,4 +16,15 @@ public class RequestWalk {
         @NotEmpty(message = "공원 이름이 비어있음")
         private String location;
     }
+
+    @Builder
+    @Data
+    public static class addGps{
+        @NotEmpty(message = "날짜가 비어있음")
+        private Date walkDate;
+        @NotEmpty(message = "위도가 비어있음")
+        private double latitude;
+        @NotEmpty(message = "경도가 비어있음")
+        private double longitude;
+    }
 }

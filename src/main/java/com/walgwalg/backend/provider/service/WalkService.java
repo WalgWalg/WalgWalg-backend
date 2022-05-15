@@ -3,9 +3,12 @@ package com.walgwalg.backend.provider.service;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.walgwalg.backend.entity.Gps;
 import com.walgwalg.backend.entity.User;
 import com.walgwalg.backend.entity.Walk;
 import com.walgwalg.backend.exception.errors.NotFoundUserException;
+import com.walgwalg.backend.exception.errors.NotFoundWalkException;
+import com.walgwalg.backend.repository.GpsRepository;
 import com.walgwalg.backend.repository.UserRepository;
 import com.walgwalg.backend.repository.WalkRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,7 @@ public class WalkService {
     private final AmazonS3Client amazonS3Client;
     private final UserRepository userRepository;
     private final WalkRepository walkRepository;
+    private final GpsRepository gpsRepository;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -40,6 +44,23 @@ public class WalkService {
                 .location(location)
                 .build();
         walkRepository.save(walk);
+    }
+    public void addGps(String userid, Date walkDate, Double latitude, Double longitude){
+        User user = userRepository.findByUserid(userid);
+        if(user == null){
+            throw new NotFoundUserException();
+        }
+        Walk walk = walkRepository.findByUserAndWalkDate(user, walkDate);
+        if(walk == null){
+            throw new NotFoundWalkException();
+        }
+        Gps gps = Gps.builder()
+                .latitude(latitude)
+                .longitude(longitude)
+                .walk(walk)
+                .build();
+        gpsRepository.save(gps);
+        walk.addGps(gps);
     }
 
 
