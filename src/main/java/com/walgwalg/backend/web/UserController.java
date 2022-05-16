@@ -61,21 +61,4 @@ public class UserController {
                 .build();
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
-
-    @GetMapping("user/list/board/like")
-    public ResponseEntity<ResponseMessage> listLike(HttpServletRequest request){
-        Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
-        String userid =null;
-        if(token.isPresent()){
-            JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token.get());
-            userid = jwtAuthToken.getClaims().getSubject();
-        }
-        List<ResponseUser.MyLike> list = userService.listLikeBoard(userid);
-        ResponseMessage response = ResponseMessage.builder()
-                .status(HttpStatus.OK.value())
-                .message("좋아요 리스트 성공")
-                .list(list)
-                .build();
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
 }
