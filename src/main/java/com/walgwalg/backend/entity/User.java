@@ -60,7 +60,12 @@ public class User {
     }
     public void addWalk(Walk walk){
         this.walkList.add(walk);
-
+    }
+    public void addLikes(Likes likes){
+        this.likeList.add(likes);
+    }
+    public void addScrap(Scrap scrap){
+        this.scrapList.add(scrap);
     }
     public void changeRefreshToken(String refreshToken){
         this.refreshToken = refreshToken;

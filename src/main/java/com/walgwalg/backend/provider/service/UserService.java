@@ -106,20 +106,7 @@ public class UserService implements UserServiceInterface {
         //유저 정보 수정
         user.changeUserInfo(encryptedPassword,changeInfoDto.getNickname(),changeInfoDto.getAddress(),salt);
     }
-    @Override
-    @Transactional
-    public List<ResponseUser.MyLike> listLikeBoard(String userid){
-        User user = userRepository.findByUserid(userid); //유저 꺼내기
-        List<Likes> likeList = likeRepository.findByUser(user);//좋아요 리스트 꺼내기
 
-        List<ResponseUser.MyLike> boards =new ArrayList<>();
-        for(Likes likeBoard : likeList){
-            Board board = boardRepository.findByLikes(likeBoard);
-            boards.add(ResponseUser.MyLike.of(board));
-        }
-        //Dto로 변환
-        return boards;
-    }
     @Override
     public String createAccessToken(String userid) {
         //유효기간 설정-2분
