@@ -1,5 +1,6 @@
 package com.walgwalg.backend.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,4 +24,11 @@ public class Gps {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "walk")
     private Walk walk;
+
+    @Builder
+    public Gps(double latitude, double longitude, Walk walk){
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.walk = walk;
+    }
 }

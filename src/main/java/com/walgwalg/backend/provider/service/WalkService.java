@@ -3,13 +3,18 @@ package com.walgwalg.backend.provider.service;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.walgwalg.backend.entity.Gps;
 import com.walgwalg.backend.entity.User;
 import com.walgwalg.backend.entity.Walk;
 import com.walgwalg.backend.exception.errors.NotFoundUserException;
+import com.walgwalg.backend.exception.errors.NotFoundWalkException;
+import com.walgwalg.backend.repository.GpsRepository;
 import com.walgwalg.backend.repository.UserRepository;
 import com.walgwalg.backend.repository.WalkRepository;
+import com.walgwalg.backend.web.dto.RequestWalk;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,10 +26,12 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@PropertySource("classpath:/secrets/application-s3.properties")
 public class WalkService {
     private final AmazonS3Client amazonS3Client;
     private final UserRepository userRepository;
     private final WalkRepository walkRepository;
+    private final GpsRepository gpsRepository;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -41,7 +48,50 @@ public class WalkService {
                 .build();
         walkRepository.save(walk);
     }
-
+    public void addGps(String userid, Date walkDate, Double latitude, Double longitude){
+        User user = userRepository.findByUserid(userid);
+        if(user == null){
+            throw new NotFoundUserException();
+        }
+        Walk walk = walkRepository.findByUserAndWalkDate(user, walkDate);
+        if(walk == null){
+            throw new NotFoundWalkException();
+        }
+        Gps gps = Gps.builder()
+                .latitude(latitude)
+                .longitude(longitude)
+                .walk(walk)
+                .build();
+        gpsRepository.save(gps);
+        walk.addGps(gps);
+    }
+    public void registerWalk(String userid,MultipartFile course, RequestWalk.registerWalk requestDto){
+        User user = userRepository.findByUserid(userid);
+        if(user == null){
+            throw new NotFoundUserException();
+        }
+        Walk walk = walkRepository.findByUserAndWalkDate(user, requestDto.getWalkDate());
+        if(walk == null){
+            throw new NotFoundWalkException();
+        }
+        //산책 코스 사진 s3에 등록
+        String url="";
+        try {
+            url = upload(course, "course");
+        }catch (IOException e){
+         System.out.println("s3 등록 실패");
+        }
+        //산책 추가 정보 등록
+        walk = Walk.builder()
+                .step_count(requestDto.getStep_count())
+                .distance(requestDto.getDistance())
+                .calorie(requestDto.getCalorie())
+                .walkTime(requestDto.getWalkTime())
+                .course(url)
+                .build();
+        walkRepository.save(walk);
+        user.addWalk(walk);
+    }
 
     public String upload(MultipartFile multipartFile, String dirName) throws IOException{
         //S3에 Multipartfile 타입은 전송이 안되므로 file로 타입 전환
@@ -76,6 +126,7 @@ public class WalkService {
          try (FileOutputStream fileOutputStream = new FileOutputStream(convertFile)){
              fileOutputStream.write(file.getBytes());
          }
+
          return Optional.of(convertFile);
      }
      return Optional.empty();

@@ -10,9 +10,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotEmpty;
 import java.util.Optional;
 
 @RestController
@@ -35,5 +38,36 @@ public class WalkController {
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
+    @PostMapping("walk/add/gps")
+    public ResponseEntity<ResponseMessage> addGps(HttpServletRequest request, @RequestBody RequestWalk.addGps requestDto){
+        Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
+        String userid = null;
+        if(token.isPresent()){
+            JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token.get());
+            userid = jwtAuthToken.getClaims().getSubject();
+        }
+        walkService.addGps(userid, requestDto.getWalkDate(),requestDto.getLatitude(),requestDto.getLongitude());
+        ResponseMessage response = ResponseMessage.builder()
+                .status(HttpStatus.OK.value())
+                .message("gps 등록 성공")
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @PostMapping("/walk/register")
+    public ResponseEntity<ResponseMessage> registerWalk(HttpServletRequest request,
+                                                        @RequestPart(value = "file", required = false) MultipartFile file,
+                                                        @RequestPart(value = "requestDto") RequestWalk.registerWalk requestDto){
+        Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
+        String userid = null;
+        if(token.isPresent()){
+            JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token.get());
+            userid = jwtAuthToken.getClaims().getSubject();
+        }
+        walkService.registerWalk(userid,file, requestDto);
+        ResponseMessage response = ResponseMessage.builder()
+                .status(HttpStatus.OK.value())
+                .message("산책 등록 성공")
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
