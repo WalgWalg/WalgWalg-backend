@@ -58,6 +58,10 @@ public class User {
         this.address = address;
         this.salt = salt;
     }
+    public void addWalk(Walk walk){
+        this.walkList.add(walk);
+
+    }
     public void changeRefreshToken(String refreshToken){
         this.refreshToken = refreshToken;
     };

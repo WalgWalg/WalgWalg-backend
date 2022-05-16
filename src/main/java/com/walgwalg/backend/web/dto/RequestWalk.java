@@ -2,7 +2,9 @@ package com.walgwalg.backend.web.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.Column;
 import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 
@@ -26,5 +28,20 @@ public class RequestWalk {
         private double latitude;
         @NotEmpty(message = "경도가 비어있음")
         private double longitude;
+    }
+
+    @Builder
+    @Data
+    public static class registerWalk{
+        @NotEmpty(message = "날짜가 비어있음")
+        private Date walkDate;
+        @NotEmpty(message = "걸음수가 비어있음")
+        private String step_count;
+        @NotEmpty(message = "거리가 비어있음")
+        private String distance;
+        @NotEmpty(message = "칼로리가 비어있음")
+        private String calorie;
+        @NotEmpty(message = "소요시간이 비어있음")
+        private String walkTime;
     }
 }
