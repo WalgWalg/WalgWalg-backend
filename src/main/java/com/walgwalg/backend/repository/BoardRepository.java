@@ -10,6 +10,5 @@ import java.util.Date;
 
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
-    Board findByLikes(Likes likes);
     Board findByUserAndTimestamp(User user, Date timestamp);
 }

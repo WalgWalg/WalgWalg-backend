@@ -36,10 +36,10 @@ public class Board {
     private Walk walk; // 산책 정보
 
     @OneToMany(mappedBy = "board")
-    private List<Likes> likes = new ArrayList<>(); //좋아요
+    private List<Likes> likesList = new ArrayList<>(); //좋아요
 
     @OneToMany(mappedBy = "board")
-    private List<Scrap> scraps = new ArrayList<>(); //스크랩
+    private List<Scrap> scrapList = new ArrayList<>(); //스크랩
 
     @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -53,5 +53,11 @@ public class Board {
         this.contents = contents;
         this.walk = walk;
         this.user = user;
+    }
+    public void addLikes(Likes likes){
+        this.likesList.add(likes);
+    }
+    public void addScrap(Scrap scrap){
+        this.scrapList.add(scrap);
     }
 }

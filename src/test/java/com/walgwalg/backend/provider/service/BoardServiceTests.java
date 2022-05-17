@@ -21,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+
 @SpringBootTest
 @ActiveProfiles("test")
 public class BoardServiceTests {
@@ -52,62 +54,16 @@ public class BoardServiceTests {
                 .user(userRepository.findByUserid("userid"))
                 .build();
         boardRepository.save(board);
-
+        user.addBoard(board);
         RequestBoard.like requestDto = RequestBoard.like.builder()
-                .timestamp(board.getTimestamp())
-                .userid(board.getUser().getUserid())
+                .writeDate(board.getTimestamp())
+                .writerId(board.getUser().getUserid())
                 .build();
 
         //좋아요
         boardService.addLike("userid", requestDto);
-
-        System.out.println("좋아요 추가 성공");
-        List<Likes> likeList = likesRepository.findByUser(userRepository.findByUserid("userid"));
-        for(Likes likes :likeList)
-            System.out.println(likes.getBoard().getTitle() +" "+ likes.getUser().getUserid());
-    }
-
-    @Test
-    @Transactional
-    @DisplayName("좋아요 취소 테스트")
-    void deleteLike(){
-        User user = User.builder()
-                .userid("userid")
-                .password("password")
-                .build();
-        userRepository.save(user);
-        //게시물 작성
-        Board board = Board.builder()
-                .title("취소하는 게시판")
-                .timestamp(new Date())
-                .user(userRepository.findByUserid("userid"))
-                .build();
-        boardRepository.save(board);
-        Board board1 = Board.builder()
-                .title("취소 안하는 게시판")
-                .timestamp(new Date())
-                .user(userRepository.findByUserid("userid"))
-                .build();
-        boardRepository.save(board1);
-
-        RequestBoard.like requestDto = RequestBoard.like.builder()
-                .timestamp(board.getTimestamp())
-                .userid(board.getUser().getUserid())
-                .build();
-        RequestBoard.like requestDto1 = RequestBoard.like.builder()
-                .timestamp(board1.getTimestamp())
-                .userid(board.getUser().getUserid())
-                .build();
-        //좋아요 추가
-        boardService.addLike("userid", requestDto);
-        boardService.addLike("userid", requestDto1);
-        //좋아요 취소
-        boardService.addLike("userid", requestDto);
-        List<Likes> likeList = likesRepository.findByUser(userRepository.findByUserid("userid"));
-        for(Likes likes :likeList)
-            System.out.println(likes.getBoard().getTitle() +" "+ likes.getUser().getUserid());
-        System.out.println("좋아요 취소 성공");
-    }
+        assertNotNull(likesRepository.findByUser(userRepository.findByUserid("userid")));
+        }
 
     @Test
     @Transactional
@@ -127,59 +83,13 @@ public class BoardServiceTests {
         boardRepository.save(board);
 
         RequestBoard.scrap requestDto = RequestBoard.scrap.builder()
-                .timestamp(board.getTimestamp())
-                .userid(board.getUser().getUserid())
+                .writeDate(board.getTimestamp())
+                .writerId(board.getUser().getUserid())
                 .build();
 
-        //좋아요
+        //스크랩
         boardService.addScrap("userid", requestDto);
-
-        System.out.println("스크랩 추가 성공");
-        List<Scrap> scraps = scrapRepository.findByUser(userRepository.findByUserid("userid"));
-        for(Scrap scrap : scraps)
-            System.out.println(scrap.getBoard().getTitle() +" "+ scrap.getUser().getUserid());
-    }
-    @Test
-    @Transactional
-    @DisplayName("스크랩 취소 테스트")
-    void deleteScrap(){
-        User user = User.builder()
-                .userid("userid")
-                .password("password")
-                .build();
-        userRepository.save(user);
-        //게시물 작성
-        Board board = Board.builder()
-                .title("취소하는 게시판")
-                .timestamp(new Date())
-                .user(userRepository.findByUserid("userid"))
-                .build();
-        boardRepository.save(board);
-        Board board1 = Board.builder()
-                .title("취소 안하는 게시판")
-                .timestamp(new Date())
-                .user(userRepository.findByUserid("userid"))
-                .build();
-        boardRepository.save(board1);
-
-        RequestBoard.scrap requestDto = RequestBoard.scrap.builder()
-                .timestamp(board.getTimestamp())
-                .userid(board.getUser().getUserid())
-                .build();
-        RequestBoard.scrap requestDto1 = RequestBoard.scrap.builder()
-                .timestamp(board.getTimestamp())
-                .userid(board.getUser().getUserid())
-                .build();
-        //스크랩 추가
-        boardService.addScrap("userid", requestDto);
-        boardService.addScrap("userid", requestDto1);
-
-        //스크랩 취소
-        boardService.addScrap("userid", requestDto);
-        List<Scrap> scraps = scrapRepository.findByUser(userRepository.findByUserid("userid"));
-        for(Scrap scrap : scraps)
-            System.out.println(scrap.getBoard().getTitle() +" "+ scrap.getUser().getUserid());
-        System.out.println("스크랩 취소 성공");
+        assertNotNull(scrapRepository.findByUser(userRepository.findByUserid("userid")));
     }
 
     @Test

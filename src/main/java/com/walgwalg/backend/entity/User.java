@@ -58,6 +58,9 @@ public class User {
         this.address = address;
         this.salt = salt;
     }
+    public void addBoard(Board board){
+        this.boardList.add(board);
+    }
     public void addWalk(Walk walk){
         this.walkList.add(walk);
     }
