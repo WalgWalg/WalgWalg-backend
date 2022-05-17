@@ -12,16 +12,16 @@ public class RequestBoard {
     @Data
     public static class like{
         @NotNull( message = "작성일자가 비어있음")
-        private Date timestamp;
-        @NotNull(message = "회원아이디가 비어있음")
-        private String userid;
+        private Date writeDate;
+        @NotNull(message = "작성자가 비어있음")
+        private String writerId;
     }
     @Builder
     @Data
     public static class scrap{
         @NotNull( message = "작성일자가 비어있음")
-        private Date timestamp;
-        @NotNull(message = "회원아이디가 비어있음")
-        private String userid;
+        private Date writeDate;
+        @NotNull(message = "작성자가 비어있음")
+        private String writerId;
     }
 }

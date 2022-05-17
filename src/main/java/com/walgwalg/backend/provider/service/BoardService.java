@@ -5,6 +5,9 @@ import com.walgwalg.backend.entity.Board;
 import com.walgwalg.backend.entity.Likes;
 import com.walgwalg.backend.entity.Scrap;
 import com.walgwalg.backend.entity.User;
+import com.walgwalg.backend.exception.errors.DuplicatedLikeException;
+import com.walgwalg.backend.exception.errors.DuplicatedScrapException;
+import com.walgwalg.backend.exception.errors.NotFoundBoardException;
 import com.walgwalg.backend.exception.errors.NotFoundUserException;
 import com.walgwalg.backend.repository.BoardRepository;
 import com.walgwalg.backend.repository.LikesRepository;
@@ -33,39 +36,58 @@ public class BoardService implements BoardServiceInterface {
     @Override
     public void addLike(String userid, RequestBoard.like requestDto){
         User user = userRepository.findByUserid(userid);
-        User boardUser = userRepository.findByUserid(requestDto.getUserid()); // 게시판 작성한 유저
-        Board board = boardRepository.findByUserAndTimestamp(boardUser, requestDto.getTimestamp()); //유저와 작성일자를 기준으로 게시판 찾기
-        Likes checklike = likesRepository.findByUserAndBoard(user, board);
-        if(checklike != null){ //이미 있으면 좋아요 취소
-            likesRepository.delete(checklike);
-            return;
+        if(user == null){ //유저가 없을 경우
+            throw new NotFoundUserException();
+        }
+        User writer = userRepository.findByUserid(requestDto.getWriterId()); // 좋아요 누른 게시판의 작성자
+        if(user == null){//작성자가 없을 경우
+            throw new NotFoundUserException();
+        }
+        Board board = boardRepository.findByUserAndTimestamp(writer, requestDto.getWriteDate()); //작성자와 작성일자를 기준으로 게시판 찾기
+        if(board ==null){
+            throw new NotFoundBoardException();
+        }
+        Likes like = likesRepository.findByUserAndBoard(user, board);
+        if(like != null){ //이미 좋아요 눌렀을 경우
+            throw new DuplicatedLikeException();
         }
         //좋아요 추가
-        Likes like = Likes.builder()
+        like = Likes.builder()
                 .user(user)
                 .board(board)
                 .build();
         likesRepository.save(like);
         user.addLikes(like);
+        board.addLikes(like);
     }
 
     @Transactional
     @Override
     public void addScrap(String userid, RequestBoard.scrap requestDto){
         User user = userRepository.findByUserid(userid);
-        User boarduser = userRepository.findByUserid(requestDto.getUserid());
-        Board board = boardRepository.findByUserAndTimestamp(boarduser, requestDto.getTimestamp());
-        Scrap checkscrap = scrapRepository.findByUserAndBoard(user, board);
-        if(checkscrap != null){ //이미 있으면 스크랩 취소
-            scrapRepository.delete(checkscrap);
-            return;
+        if(user == null){ //유저가 없을 경우
+            throw new NotFoundUserException();
+        }
+        User writer = userRepository.findByUserid(requestDto.getWriterId()); // 좋아요 누른 게시판의 작성자
+        if(user == null){//작성자가 없을 경우
+            throw new NotFoundUserException();
+        }
+        Board board = boardRepository.findByUserAndTimestamp(writer, requestDto.getWriteDate()); //작성자와 작성일자를 기준으로 게시판 찾기
+        if(board ==null){
+            throw new NotFoundBoardException();
+        }
+        Scrap scrap = scrapRepository.findByUserAndBoard(user, board);
+        if(scrap != null){ //이미 스크랩 했을 경우
+            throw new DuplicatedScrapException();
         }
         //스크랩 추가
-       Scrap scrap = Scrap.builder()
+       scrap = Scrap.builder()
                 .user(user)
                 .board(board)
                 .build();
         scrapRepository.save(scrap);
+        user.addScrap(scrap);
+        board.addScrap(scrap);
     }
     @Override
     @Transactional
@@ -79,7 +101,7 @@ public class BoardService implements BoardServiceInterface {
         List<ResponseBoard.MyLike> boards =new ArrayList<>();
 
         for(Likes like : likeList){
-            Board board = boardRepository.findByLikes(like);
+            Board board = like.getBoard();
             boards.add(ResponseBoard.MyLike.of(board));
         }
         //Dto로 변환
