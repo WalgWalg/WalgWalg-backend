@@ -35,10 +35,10 @@ public class Board {
     @JoinColumn(name = "walk_id")
     private Walk walk; // 산책 정보
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Likes> likesList = new ArrayList<>(); //좋아요
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Scrap> scrapList = new ArrayList<>(); //스크랩
 
     @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
