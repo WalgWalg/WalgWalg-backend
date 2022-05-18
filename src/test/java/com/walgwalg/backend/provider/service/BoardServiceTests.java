@@ -4,6 +4,7 @@ import com.walgwalg.backend.entity.Board;
 import com.walgwalg.backend.entity.Likes;
 import com.walgwalg.backend.entity.Scrap;
 import com.walgwalg.backend.entity.User;
+import com.walgwalg.backend.exception.errors.NotFoundBoardException;
 import com.walgwalg.backend.repository.BoardRepository;
 import com.walgwalg.backend.repository.LikesRepository;
 import com.walgwalg.backend.repository.ScrapRepository;
@@ -22,6 +23,8 @@ import java.util.Date;
 import java.util.List;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -64,6 +67,37 @@ public class BoardServiceTests {
         boardService.addLike("userid", requestDto);
         assertNotNull(likesRepository.findByUser(userRepository.findByUserid("userid")));
         }
+    @Test
+    @Transactional
+    @DisplayName("좋아요 한 게시판 삭제 테스트")
+    void deleteLikeBoard(){
+
+        User user = User.builder()
+                .userid("userid")
+                .password("password")
+                .build();
+        userRepository.save(user);
+        //게시물 작성
+        Board board = Board.builder()
+                .title("title")
+                .timestamp(new Date())
+                .user(userRepository.findByUserid("userid"))
+                .build();
+        boardRepository.save(board);
+        user.addBoard(board);
+        RequestBoard.like requestDto = RequestBoard.like.builder()
+                .writeDate(board.getTimestamp())
+                .writerId(board.getUser().getUserid())
+                .build();
+
+        //좋아요
+        boardService.addLike("userid", requestDto);
+        assertNotNull(likesRepository.findByUser(userRepository.findByUserid("userid")));
+        //좋아요 삭제
+        boardService.deleteLikeBoard(board.getId());
+        assertThrows(NotFoundBoardException.class,()->boardService.deleteLikeBoard(board.getId()));
+    }
+
 
     @Test
     @Transactional

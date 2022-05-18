@@ -60,6 +60,13 @@ public class BoardService implements BoardServiceInterface {
         user.addLikes(like);
         board.addLikes(like);
     }
+    @Transactional
+    @Override
+    public void deleteLikeBoard(Long boardId){
+        Board board = boardRepository.findById(boardId).orElseThrow(()->new NotFoundBoardException());
+        boardRepository.delete(board);
+    }
+
 
     @Transactional
     @Override

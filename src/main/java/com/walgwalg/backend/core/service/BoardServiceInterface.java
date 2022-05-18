@@ -10,4 +10,5 @@ public interface BoardServiceInterface {
     void addLike(String userid, RequestBoard.like requestDto);
     void addScrap(String userid, RequestBoard.scrap requestDto);
     List<ResponseBoard.MyLike> listLikeBoard(String userid);
+    void deleteLikeBoard(Long boardId);
 }
