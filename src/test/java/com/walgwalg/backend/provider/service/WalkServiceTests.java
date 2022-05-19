@@ -7,6 +7,7 @@ import com.walgwalg.backend.repository.GpsRepository;
 import com.walgwalg.backend.repository.UserRepository;
 import com.walgwalg.backend.repository.WalkRepository;
 import com.walgwalg.backend.web.dto.RequestWalk;
+import com.walgwalg.backend.web.dto.ResponseGps;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -43,7 +45,7 @@ public class WalkServiceTests {
         userRepository.save(user);
 
         Date date = new Date();
-        walkService.startWalk("userid", date, "광교호수공원");
+        Long walkId = walkService.startWalk("userid", date, "광교호수공원");
         assertNotNull(walkRepository.findAll());
     }
 
@@ -69,7 +71,32 @@ public class WalkServiceTests {
         walkService.addGps("userid",date, 18.999,20.8888);
         assertNotNull(gpsRepository.findAll());
     }
-
+    @Test
+    @Transactional
+    @DisplayName("GPS 조회 테스트")
+    void getGpsTest(){
+        User user = User.builder()
+                .userid("userid")
+                .password("password")
+                .nickname("nick")
+                .address("address")
+                .build();
+        userRepository.save(user);
+        Date date = new Date();
+        Walk walk = Walk.builder()
+                .user(user)
+                .walkDate(date)
+                .location("광교호수공원")
+                .build();
+        walk = walkRepository.save(walk);
+        //Gps 등록
+        walkService.addGps("userid",date, 18.999,20.8888);
+        walkService.addGps("userid",date, 28.999,30.8888);
+        //Gps 조회
+        List<ResponseGps.gps> list =walkService.getGps(walk.getId());
+        for(ResponseGps.gps gps : list)
+            System.out.println(gps.getLatitude() +" "+gps.getLongitude());
+    }
     @Test
     @Transactional
     @DisplayName("산책 저장 테스트")
