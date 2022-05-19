@@ -12,6 +12,7 @@ import com.walgwalg.backend.repository.GpsRepository;
 import com.walgwalg.backend.repository.UserRepository;
 import com.walgwalg.backend.repository.WalkRepository;
 import com.walgwalg.backend.web.dto.RequestWalk;
+import com.walgwalg.backend.web.dto.ResponseGps;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -21,7 +22,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -36,7 +39,7 @@ public class WalkService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public void startWalk(String userid, Date walkDate, String location){
+    public Long startWalk(String userid, Date walkDate, String location){
         User user = userRepository.findByUserid(userid);
         if(user == null){
             throw new NotFoundUserException();
@@ -46,7 +49,8 @@ public class WalkService {
                 .walkDate(walkDate)
                 .location(location)
                 .build();
-        walkRepository.save(walk);
+        walk = walkRepository.save(walk);
+        return walk.getId();
     }
     public void addGps(String userid, Date walkDate, Double latitude, Double longitude){
         User user = userRepository.findByUserid(userid);
@@ -64,6 +68,20 @@ public class WalkService {
                 .build();
         gpsRepository.save(gps);
         walk.addGps(gps);
+    }
+    public List<ResponseGps.gps> getGps(Long walkId){
+        Walk walk = walkRepository.findById(walkId).orElseThrow(()-> new NotFoundWalkException());
+        List<Gps> gpsList = gpsRepository.findByWalk(walk);
+
+        List<ResponseGps.gps> list = new ArrayList<>();
+        for(Gps gps: gpsList){
+            ResponseGps.gps gpsDto = ResponseGps.gps.builder()
+                    .latitude(gps.getLatitude())
+                    .longitude(gps.getLongitude())
+                    .build();
+            list.add(gpsDto);
+        }
+        return list;
     }
     public void registerWalk(String userid,MultipartFile course, RequestWalk.registerWalk requestDto){
         User user = userRepository.findByUserid(userid);
