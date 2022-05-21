@@ -6,6 +6,7 @@ import com.walgwalg.backend.provider.service.WalkService;
 import com.walgwalg.backend.web.dto.RequestWalk;
 import com.walgwalg.backend.web.dto.ResponseGps;
 import com.walgwalg.backend.web.dto.ResponseMessage;
+import com.walgwalg.backend.web.dto.ResponseWalk;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -63,10 +64,12 @@ public class WalkController {
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @PostMapping("/walk/register")
+    @PostMapping("/walk/finish")
     public ResponseEntity<ResponseMessage> registerWalk(HttpServletRequest request,
                                                         @RequestPart(value = "file", required = false) MultipartFile file,
                                                         @RequestPart(value = "requestDto") RequestWalk.registerWalk requestDto){
+        System.out.println("-----------------------------------");
+        System.out.println(requestDto.getWalkDate());
         Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
         String userid = null;
         if(token.isPresent()){
@@ -77,6 +80,22 @@ public class WalkController {
         ResponseMessage response = ResponseMessage.builder()
                 .status(HttpStatus.OK.value())
                 .message("산책 등록 성공")
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @GetMapping("/walk/list")
+    public ResponseEntity<ResponseMessage> getAllMyWalk(HttpServletRequest request){
+        Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
+        String userid = null;
+        if(token.isPresent()){
+            JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token.get());
+            userid = jwtAuthToken.getClaims().getSubject();
+        }
+        List<ResponseWalk.list>list = walkService.getAllMyWalk(userid);
+        ResponseMessage response = ResponseMessage.builder()
+                .status(HttpStatus.OK.value())
+                .message("산책 조회 성공")
+                .list(list)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
