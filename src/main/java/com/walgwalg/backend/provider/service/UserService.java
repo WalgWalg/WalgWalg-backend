@@ -5,6 +5,7 @@ import com.walgwalg.backend.core.service.UserServiceInterface;
 import com.walgwalg.backend.entity.Board;
 import com.walgwalg.backend.entity.Likes;
 import com.walgwalg.backend.entity.User;
+import com.walgwalg.backend.exception.errors.CustomJwtRuntimeException;
 import com.walgwalg.backend.exception.errors.LoginFailedException;
 import com.walgwalg.backend.exception.errors.NotFoundUserException;
 import com.walgwalg.backend.exception.errors.RegisterFailedException;
@@ -106,7 +107,35 @@ public class UserService implements UserServiceInterface {
         //유저 정보 수정
         user.changeUserInfo(encryptedPassword,changeInfoDto.getNickname(),changeInfoDto.getAddress(),salt);
     }
+    @Transactional
+    @Override
+    public Optional<ResponseUser.Token> updateAccessToken(String token){
+        if(token == null || token.equals("null")){
+            System.out.println("토큰없음");
+            //throw new CustomJwtRuntimeException();
+        }
+        User user = userRepository.findByRefreshToken(token);
+        if(user == null){
+            throw new NotFoundUserException();
+        }
+        if(!user.getRefreshToken().equals(token)){
+            System.out.println("디비랑 똑같지 않음");
+           // throw new CustomJwtRuntimeException();
+        }
+        //토큰 유효성 검증
+        JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token);
+        if(!jwtAuthToken.validate() || !jwtAuthToken.getClaims().get("role").equals(Role.USER.getCode())){
+         return Optional.empty();
+        }
+        String id = String.valueOf(jwtAuthToken.getClaims().getSubject());
+        String accessToken = createAccessToken(id); //accessToken 재발급
 
+        ResponseUser.Token newToken = ResponseUser.Token.builder()
+                .accessToken(accessToken)
+                .refreshToken(token)
+                .build();
+        return Optional.ofNullable(newToken);
+    }
     @Override
     public String createAccessToken(String userid) {
         //유효기간 설정-2분
