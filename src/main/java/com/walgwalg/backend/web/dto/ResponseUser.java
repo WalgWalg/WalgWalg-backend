@@ -15,4 +15,10 @@ public class ResponseUser {
         private String accessToken;
         private String refreshToken;
     }
+    @Data
+    @Builder
+    public static class Token{
+        private String accessToken;
+        private String refreshToken;
+    }
 }

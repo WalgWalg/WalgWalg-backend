@@ -1,6 +1,7 @@
 package com.walgwalg.backend.web;
 
 import com.walgwalg.backend.entity.User;
+import com.walgwalg.backend.exception.errors.CustomJwtRuntimeException;
 import com.walgwalg.backend.exception.errors.LoginFailedException;
 import com.walgwalg.backend.exception.errors.RegisterFailedException;
 import com.walgwalg.backend.provider.security.JwtAuthToken;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -60,5 +62,17 @@ public class UserController {
                 .message("회원정보 수정 성공")
                 .build();
         return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @PostMapping("/user/update/accessToken")
+    public ResponseEntity<ResponseMessage> refreshToken(@RequestBody Map<String, String> refreshToken){
+        ResponseUser.Token token = userService.updateAccessToken(refreshToken.get("refreshToken")).orElseThrow(()->new CustomJwtRuntimeException());
+
+        ResponseMessage response = ResponseMessage.builder()
+                .status(HttpStatus.OK.value())
+                .message("accessToken 갱신 성공")
+                .list(token)
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
