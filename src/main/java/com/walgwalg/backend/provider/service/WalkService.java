@@ -114,6 +114,7 @@ public class WalkService implements WalkServiceInterface {
                 requestDto.getCalorie(),requestDto.getWalkTime(), url);
         user.addWalk(walk);
     }
+
     @Override
     @Transactional
     public List<ResponseWalk.list> getAllMyWalk(String userid){
@@ -137,6 +138,18 @@ public class WalkService implements WalkServiceInterface {
             list.add(responseDto);
         }
         return list;
+    }
+    @Transactional
+    public void deleteWalk(String userId, Long walkId){
+        User user = userRepository.findByUserid(userId);
+        if(user == null){
+            throw new NotFoundUserException();
+        }
+        Walk walk = walkRepository.findByUserAndId(user, walkId);
+        if(walk == null){
+            throw new NotFoundWalkException();
+        }
+        walkRepository.delete(walk);
     }
     // S3 업로드
     public String upload(MultipartFile multipartFile, String dirName) throws IOException{
