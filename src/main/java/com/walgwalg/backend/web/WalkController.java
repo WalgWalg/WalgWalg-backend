@@ -55,7 +55,7 @@ public class WalkController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @GetMapping("walk/{walkId}/gps")
-    public ResponseEntity<ResponseMessage> addGps(@PathVariable("walkId") Long walkId){
+    public ResponseEntity<ResponseMessage> addGps(@PathVariable Long walkId){
         List<ResponseGps.gps> gpsList = walkService.getGps(walkId);
         ResponseMessage response = ResponseMessage.builder()
                 .status(HttpStatus.OK.value())
@@ -68,8 +68,6 @@ public class WalkController {
     public ResponseEntity<ResponseMessage> registerWalk(HttpServletRequest request,
                                                         @RequestPart(value = "file", required = false) MultipartFile file,
                                                         @RequestPart(value = "requestDto") RequestWalk.registerWalk requestDto){
-        System.out.println("-----------------------------------");
-        System.out.println(requestDto.getWalkDate());
         Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
         String userid = null;
         if(token.isPresent()){
@@ -98,5 +96,21 @@ public class WalkController {
                 .list(list)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/walk/{walkId}")
+    public ResponseEntity<ResponseMessage> deleteWalk(HttpServletRequest request, @PathVariable Long walkId ){
+        Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
+        String userId = null;
+        if(token.isPresent()){
+            JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token.get());
+            userId = jwtAuthToken.getClaims().getSubject();
+        }
+        walkService.deleteWalk(userId, walkId);
+
+        return new ResponseEntity<>(ResponseMessage.builder()
+                .status(HttpStatus.OK.value())
+                .message("산책 삭제 성공")
+                .build(), HttpStatus.OK);
     }
 }

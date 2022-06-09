@@ -10,5 +10,6 @@ import java.util.List;
 
 public interface WalkRepository extends JpaRepository<Walk,Long> {
     Walk findByUserAndWalkDate(User user, Date walkDate);
+    Walk findByUserAndId(User user, Long id);
     List<Walk> findByUser(User user);
 }

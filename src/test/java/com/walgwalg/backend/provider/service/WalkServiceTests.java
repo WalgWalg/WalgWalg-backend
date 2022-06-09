@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @SpringBootTest
 public class WalkServiceTests {
@@ -169,5 +170,27 @@ public class WalkServiceTests {
             System.out.println(list1.getWalkTime());
         }
         assertNotNull(list);
+    }
+    @Test
+    @Transactional
+    @DisplayName("산책 삭제 테스트")
+    void deleteWalk() throws IOException {
+        User user = User.builder()
+                .userid("userid")
+                .password("password")
+                .nickname("nick")
+                .address("address")
+                .build();
+        user = userRepository.save(user);
+        Date date = new Date();
+        Walk walk = Walk.builder()
+                .user(user)
+                .walkDate(date)
+                .location("광교호수공원")
+                .build();
+        walk = walkRepository.save(walk);
+
+        walkService.deleteWalk("userid", walk.getId());
+        assertNull(walkRepository.findByUserAndId(user, walk.getId()));
     }
 }
