@@ -1,14 +1,8 @@
 package com.walgwalg.backend.provider.service;
 
-import com.walgwalg.backend.entity.Board;
-import com.walgwalg.backend.entity.Likes;
-import com.walgwalg.backend.entity.Scrap;
-import com.walgwalg.backend.entity.User;
+import com.walgwalg.backend.entity.*;
 import com.walgwalg.backend.exception.errors.NotFoundBoardException;
-import com.walgwalg.backend.repository.BoardRepository;
-import com.walgwalg.backend.repository.LikesRepository;
-import com.walgwalg.backend.repository.ScrapRepository;
-import com.walgwalg.backend.repository.UserRepository;
+import com.walgwalg.backend.repository.*;
 import com.walgwalg.backend.web.dto.RequestBoard;
 import com.walgwalg.backend.web.dto.ResponseBoard;
 import com.walgwalg.backend.web.dto.ResponseUser;
@@ -19,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -40,7 +35,38 @@ public class BoardServiceTests {
     @Autowired
     private ScrapRepository scrapRepository;
     @Autowired
+    private WalkRepository walkRepository;
+    @Autowired
     private  UserService userService;
+
+    @Test
+    @Transactional
+    @DisplayName("게시판 등록 테스트")
+    void registerBoard(){
+        User user = User.builder()
+                .userid("userid")
+                .password("password")
+                .build();
+        userRepository.save(user);
+        Walk walk = Walk.builder()
+                .user(user)
+                .location("광교호수공원")
+                .build();
+        walk = walkRepository.save(walk);
+        List<String> hashTags = new ArrayList<>();
+        hashTags.add("해시태그1");
+        hashTags.add("해시태그2");
+        RequestBoard.register requestDto = RequestBoard.register.builder()
+                .walkId(walk.getId())
+                .title("게시판 제목")
+                .contents("내용입니다.")
+                .hashTags(hashTags)
+                .build();
+        boardService.registerBoard("userid", requestDto);
+
+        assertNotNull(boardRepository.findByUser(user));
+    }
+
     @Test
     @Transactional
     @DisplayName("좋아요 추가 테스트")
@@ -53,24 +79,19 @@ public class BoardServiceTests {
         //게시물 작성
         Board board = Board.builder()
                 .title("title")
-                .timestamp(new Date())
                 .user(userRepository.findByUserid("userid"))
                 .build();
-        boardRepository.save(board);
+        board = boardRepository.save(board);
         user.addBoard(board);
-        RequestBoard.like requestDto = RequestBoard.like.builder()
-                .writeDate(board.getTimestamp())
-                .writerId(board.getUser().getUserid())
-                .build();
 
         //좋아요
-        boardService.addLike("userid", requestDto);
+        boardService.addLike("userid", board.getId());
         assertNotNull(likesRepository.findByUser(userRepository.findByUserid("userid")));
         }
     @Test
     @Transactional
-    @DisplayName("좋아요 한 게시판 삭제 테스트")
-    void deleteLikeBoard(){
+    @DisplayName("좋아요 삭제 테스트")
+    void deleteLike(){
 
         User user = User.builder()
                 .userid("userid")
@@ -80,19 +101,18 @@ public class BoardServiceTests {
         //게시물 작성
         Board board = Board.builder()
                 .title("title")
-                .timestamp(new Date())
                 .user(userRepository.findByUserid("userid"))
                 .build();
         boardRepository.save(board);
         user.addBoard(board);
-        RequestBoard.like requestDto = RequestBoard.like.builder()
-                .writeDate(board.getTimestamp())
-                .writerId(board.getUser().getUserid())
-                .build();
-
         //좋아요
-        boardService.addLike("userid", requestDto);
-        assertNotNull(likesRepository.findByUser(userRepository.findByUserid("userid")));
+        Likes likes = Likes.builder()
+                .user(user)
+                .board(board)
+                .build();
+        likesRepository.save(likes);
+        user.addLikes(likes);
+        board.addLikes(likes);
         //좋아요 삭제
         boardService.deleteLikeBoard(board.getId());
         assertThrows(NotFoundBoardException.class,()->boardService.deleteLikeBoard(board.getId()));
@@ -111,7 +131,6 @@ public class BoardServiceTests {
         //게시물 작성
         Board board = Board.builder()
                 .title("title")
-                .timestamp(new Date())
                 .user(userRepository.findByUserid("userid"))
                 .build();
         boardRepository.save(board);

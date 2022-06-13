@@ -3,6 +3,7 @@ package com.walgwalg.backend.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -22,7 +23,8 @@ public class Board {
     @Column(name = "title")
     private String title; //제목
 
-    @Column(name = "date")
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
     private Date timestamp = new Date();
 
     @OneToMany(mappedBy = "board")
@@ -46,10 +48,8 @@ public class Board {
     private User user; // 유저
 
     @Builder
-    public Board(String title,Date timestamp, List<HashTag> hashTags,String contents,Walk walk, User user){
+    public Board(String title,String contents,Walk walk, User user){
         this.title = title;
-        this.timestamp =timestamp;
-        this.hashTags = hashTags;
         this.contents = contents;
         this.walk = walk;
         this.user = user;
@@ -60,4 +60,5 @@ public class Board {
     public void addScrap(Scrap scrap){
         this.scrapList.add(scrap);
     }
+    public void addHashTag(HashTag hashTag){this.hashTags.add(hashTag);}
 }
