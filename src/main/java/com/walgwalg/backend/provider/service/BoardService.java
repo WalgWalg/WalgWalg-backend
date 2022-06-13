@@ -1,18 +1,12 @@
 package com.walgwalg.backend.provider.service;
 
 import com.walgwalg.backend.core.service.BoardServiceInterface;
-import com.walgwalg.backend.entity.Board;
-import com.walgwalg.backend.entity.Likes;
-import com.walgwalg.backend.entity.Scrap;
-import com.walgwalg.backend.entity.User;
+import com.walgwalg.backend.entity.*;
 import com.walgwalg.backend.exception.errors.DuplicatedLikeException;
 import com.walgwalg.backend.exception.errors.DuplicatedScrapException;
 import com.walgwalg.backend.exception.errors.NotFoundBoardException;
 import com.walgwalg.backend.exception.errors.NotFoundUserException;
-import com.walgwalg.backend.repository.BoardRepository;
-import com.walgwalg.backend.repository.LikesRepository;
-import com.walgwalg.backend.repository.ScrapRepository;
-import com.walgwalg.backend.repository.UserRepository;
+import com.walgwalg.backend.repository.*;
 import com.walgwalg.backend.web.dto.RequestBoard;
 import com.walgwalg.backend.web.dto.ResponseBoard;
 import com.walgwalg.backend.web.dto.ResponseUser;
@@ -31,22 +25,51 @@ public class BoardService implements BoardServiceInterface {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final ScrapRepository scrapRepository;
+    private final WalkRepository walkRepository;
+    private final HashTagRepository hashTagRepository;
 
     @Transactional
     @Override
-    public void addLike(String userid, RequestBoard.like requestDto){
+    public void registerBoard(String userid, RequestBoard.register requestDto){
         User user = userRepository.findByUserid(userid);
         if(user == null){ //유저가 없을 경우
             throw new NotFoundUserException();
         }
-        User writer = userRepository.findByUserid(requestDto.getWriterId()); // 좋아요 누른 게시판의 작성자
-        if(user == null){//작성자가 없을 경우
+        Walk walk = walkRepository.findByUserAndId(user, requestDto.getWalkId());
+        if(walk == null){ //해당 산책이 없을 경우
             throw new NotFoundUserException();
         }
-        Board board = boardRepository.findByUserAndTimestamp(writer, requestDto.getWriteDate()); //작성자와 작성일자를 기준으로 게시판 찾기
-        if(board ==null){
-            throw new NotFoundBoardException();
+        //게시판 등록
+        Board board = Board.builder()
+                .title(requestDto.getTitle())
+                .contents(requestDto.getContents())
+                .walk(walk)
+                .user(user)
+                .build();
+        board = boardRepository.save(board);
+
+        //해시태그가 있을 경우
+        if(!requestDto.getHashTags().isEmpty()){
+            for(String item: requestDto.getHashTags()){
+                HashTag hashTag = HashTag.builder()
+                        .tag(item)
+                        .board(board)
+                        .build();
+                hashTag = hashTagRepository.save(hashTag);
+                board.addHashTag(hashTag);
+            }
         }
+    }
+    //좋아요
+    @Transactional
+    @Override
+    public void addLike(String userid, Long boardId){
+        User user = userRepository.findByUserid(userid);
+        if(user == null){ //유저가 없을 경우
+            throw new NotFoundUserException();
+        }
+        Board board = boardRepository.findById(boardId).orElseThrow(()->new NotFoundBoardException());
+
         Likes like = likesRepository.findByUserAndBoard(user, board);
         if(like != null){ //이미 좋아요 눌렀을 경우
             throw new DuplicatedLikeException();
@@ -56,7 +79,7 @@ public class BoardService implements BoardServiceInterface {
                 .user(user)
                 .board(board)
                 .build();
-        likesRepository.save(like);
+        like = likesRepository.save(like);
         user.addLikes(like);
         board.addLikes(like);
     }

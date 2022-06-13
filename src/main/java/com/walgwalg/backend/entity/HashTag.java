@@ -1,5 +1,6 @@
 package com.walgwalg.backend.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,4 +21,10 @@ public class HashTag {
     @ManyToOne(targetEntity = Board.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board; //게시물
+
+    @Builder
+    public HashTag(String tag, Board board){
+        this.tag = tag;
+        this.board = board;
+    }
 }
