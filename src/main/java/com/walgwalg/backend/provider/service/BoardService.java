@@ -1,5 +1,6 @@
 package com.walgwalg.backend.provider.service;
 
+import com.amazonaws.Response;
 import com.walgwalg.backend.core.service.BoardServiceInterface;
 import com.walgwalg.backend.entity.*;
 import com.walgwalg.backend.exception.errors.DuplicatedLikeException;
@@ -59,6 +60,31 @@ public class BoardService implements BoardServiceInterface {
                 board.addHashTag(hashTag);
             }
         }
+    }
+    @Transactional
+    @Override
+    public ResponseBoard.getBoard getBoard(Long boardId){
+        Board board = boardRepository.findById(boardId).orElseThrow(()->new NotFoundBoardException());
+        Walk walk = board.getWalk();
+        List<String> hashTagList = new ArrayList<>();
+        if(!board.getHashTags().isEmpty()){//해시태그가 있으면
+            for(HashTag tag : board.getHashTags()){
+                hashTagList.add(tag.getTag());
+            }
+        }
+        ResponseBoard.getBoard response = ResponseBoard.getBoard.builder()
+                .title(board.getTitle())
+                .contents(board.getContents())
+                .hashTags(hashTagList)
+                .step_count(walk.getStep_count())
+                .distance(walk.getDistance())
+                .calorie(walk.getCalorie())
+                .course(walk.getCourse())
+                .location(walk.getLocation())
+                .nickname(board.getUser().getNickname())
+                .likes(board.getLikesList().size())
+                .build();
+        return response;
     }
     //좋아요
     @Transactional

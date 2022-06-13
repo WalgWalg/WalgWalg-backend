@@ -9,6 +9,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ResponseBoard {
+    @Builder
+    @Data
+    public static class getBoard{
+        private String title;
+        private String contents;
+        private List<String> hashTags;
+        //산책 정보
+        private Integer step_count;
+        private float distance;
+        private Integer calorie;
+        private String course;
+        private String location;
+        //작성자
+        private String nickname;
+        //좋아요
+        private Integer likes;
+
+    }
+
     @Data
     @Builder
     public static class MyLike{

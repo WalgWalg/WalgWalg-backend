@@ -42,7 +42,7 @@ public class BoardServiceTests {
     @Test
     @Transactional
     @DisplayName("게시판 등록 테스트")
-    void registerBoard(){
+    void registerBoardTest(){
         User user = User.builder()
                 .userid("userid")
                 .password("password")
@@ -66,11 +66,38 @@ public class BoardServiceTests {
 
         assertNotNull(boardRepository.findByUser(user));
     }
-
+    @Test
+    @Transactional
+    @DisplayName("게시판 조회 테스트")
+    void getBoardTest(){
+        User user = User.builder()
+                .userid("userid")
+                .password("password")
+                .build();
+        user = userRepository.save(user);
+        Walk walk = Walk.builder()
+                .user(user)
+                .location("광교호수공원")
+                .build();
+        walk = walkRepository.save(walk);
+        List<String> hashTags = new ArrayList<>();
+        hashTags.add("해시태그1");
+        hashTags.add("해시태그2");
+        RequestBoard.register requestDto = RequestBoard.register.builder()
+                .walkId(walk.getId())
+                .title("게시판 제목")
+                .contents("내용입니다.")
+                .hashTags(hashTags)
+                .build();
+        boardService.registerBoard("userid", requestDto);
+        Board board = boardRepository.findByUserAndTitle(user,"게시판 제목");
+        ResponseBoard.getBoard response = boardService.getBoard(board.getId());
+        assertNotNull(response);
+    }
     @Test
     @Transactional
     @DisplayName("좋아요 추가 테스트")
-    void addLike(){
+    void addLikeTest(){
         User user = User.builder()
                 .userid("userid")
                 .password("password")

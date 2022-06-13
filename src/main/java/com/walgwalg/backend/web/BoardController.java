@@ -38,6 +38,16 @@ public class BoardController {
                 .message("게시판 등록 성공")
                 .build(), HttpStatus.OK);
     }
+    @GetMapping("/board/{boardId}")
+    public ResponseEntity<ResponseMessage> getBoard(@PathVariable Long boardId){
+        ResponseBoard.getBoard response = boardService.getBoard(boardId);
+
+        return new ResponseEntity<>(ResponseMessage.builder()
+                .status(HttpStatus.OK.value())
+                .message("게시판 조회 성공")
+                .list(response)
+                .build(), HttpStatus.OK);
+    }
 
     @PostMapping("/board/like")
     public ResponseEntity<ResponseMessage> addLike(HttpServletRequest request, @RequestBody Map<String, Long> boardId){

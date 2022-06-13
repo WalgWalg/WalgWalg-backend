@@ -12,5 +12,6 @@ import java.util.List;
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
     Board findByUserAndTimestamp(User user, Date timestamp);
+    Board findByUserAndTitle(User user, String title);
     List<Board> findByUser(User user);
 }
