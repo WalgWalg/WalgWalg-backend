@@ -1,5 +1,6 @@
 package com.walgwalg.backend.provider.service;
 
+import com.amazonaws.Response;
 import com.walgwalg.backend.core.service.BoardServiceInterface;
 import com.walgwalg.backend.entity.*;
 import com.walgwalg.backend.exception.errors.DuplicatedLikeException;
@@ -47,8 +48,8 @@ public class BoardService implements BoardServiceInterface {
                 .user(user)
                 .build();
         board = boardRepository.save(board);
-
         //해시태그가 있을 경우
+
         if(!requestDto.getHashTags().isEmpty()){
             for(String item: requestDto.getHashTags()){
                 HashTag hashTag = HashTag.builder()
@@ -60,6 +61,50 @@ public class BoardService implements BoardServiceInterface {
             }
         }
     }
+    @Transactional
+    @Override
+    public ResponseBoard.getBoard getBoard(Long boardId){
+        Board board = boardRepository.findById(boardId).orElseThrow(()->new NotFoundBoardException());
+        Walk walk = board.getWalk();
+        List<String> hashTagList = new ArrayList<>();
+        if(!board.getHashTags().isEmpty()){//해시태그가 있으면
+            for(HashTag tag : board.getHashTags()){
+                hashTagList.add(tag.getTag());
+            }
+        }
+        ResponseBoard.getBoard response = ResponseBoard.getBoard.builder()
+                .title(board.getTitle())
+                .contents(board.getContents())
+                .hashTags(hashTagList)
+                .step_count(walk.getStep_count())
+                .distance(walk.getDistance())
+                .calorie(walk.getCalorie())
+                .course(walk.getCourse())
+                .location(walk.getLocation())
+                .nickname(board.getUser().getNickname())
+                .likes(board.getLikesList().size())
+                .build();
+        return response;
+    }
+    @Transactional
+    @Override
+    public List<ResponseBoard.list> getMyBoard(String userId){
+        User user = userRepository.findByUserid(userId);
+        if(user == null){ //유저가 없을 경우
+            throw new NotFoundUserException();
+        }
+        List<ResponseBoard.list> list = new ArrayList<>();
+
+        List<Board> boardList = boardRepository.findByUser(user);
+        if(!boardList.isEmpty()){//게시판이 있을 경우
+            for(Board board : boardList){
+                list.add(ResponseBoard.list.of(board));
+            }
+        }
+
+        return list;
+    }
+
     //좋아요
     @Transactional
     @Override

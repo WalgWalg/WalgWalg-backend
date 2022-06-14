@@ -12,4 +12,6 @@ public interface BoardServiceInterface {
     List<ResponseBoard.MyLike> listLikeBoard(String userid);
     void deleteLikeBoard(Long boardId);
     void registerBoard(String userid, RequestBoard.register requestDto);
+    ResponseBoard.getBoard getBoard(Long boardId);
+    List<ResponseBoard.list> getMyBoard(String userId);
 }
