@@ -94,6 +94,49 @@ public class BoardServiceTests {
         ResponseBoard.getBoard response = boardService.getBoard(board.getId());
         assertNotNull(response);
     }
+
+    @Test
+    @Transactional
+    @DisplayName("내가 작성한 게시판 조회 테스트")
+    void getMyBoardTest(){
+        User user = User.builder()
+                .userid("userid")
+                .password("password")
+                .build();
+        user = userRepository.save(user);
+        //게시판 등록1
+        Walk walk = Walk.builder()
+                .user(user)
+                .location("광교호수공원")
+                .build();
+        walk = walkRepository.save(walk);
+        List<String> hashTags = new ArrayList<>();
+        hashTags.add("해시태그1");
+        hashTags.add("해시태그2");
+        RequestBoard.register requestDto = RequestBoard.register.builder()
+                .walkId(walk.getId())
+                .title("게시판 제목")
+                .contents("내용입니다.")
+                .hashTags(hashTags)
+                .build();
+
+        boardService.registerBoard("userid", requestDto);
+        //게시판 등록2 - 해시태그 없을 때
+        Walk walk1 = Walk.builder()
+                .user(user)
+                .location("중앙공원")
+                .build();
+        walk1 = walkRepository.save(walk1);
+        RequestBoard.register requestDto1 = RequestBoard.register.builder()
+                .walkId(walk1.getId())
+                .title("게시판 제목1")
+                .contents("내용입니다.")
+                .build();
+        boardService.registerBoard("userid", requestDto1);
+        //조회
+        List<ResponseBoard.list> list = boardService.getMyBoard("userid");
+        System.out.println(list);
+    }
     @Test
     @Transactional
     @DisplayName("좋아요 추가 테스트")

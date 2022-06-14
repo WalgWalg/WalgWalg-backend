@@ -44,7 +44,7 @@ public class Walk {
     @JoinColumn(name = "user_id")
     private User user; // 유저
 
-    @OneToOne(mappedBy = "walk")
+    @OneToOne(mappedBy = "walk", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Board board; //게시판
 
     @OneToMany(mappedBy = "walk", cascade = CascadeType.REMOVE, orphanRemoval = true)

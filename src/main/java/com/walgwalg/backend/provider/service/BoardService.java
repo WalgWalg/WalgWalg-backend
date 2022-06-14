@@ -48,8 +48,8 @@ public class BoardService implements BoardServiceInterface {
                 .user(user)
                 .build();
         board = boardRepository.save(board);
-
         //해시태그가 있을 경우
+
         if(!requestDto.getHashTags().isEmpty()){
             for(String item: requestDto.getHashTags()){
                 HashTag hashTag = HashTag.builder()
@@ -86,6 +86,25 @@ public class BoardService implements BoardServiceInterface {
                 .build();
         return response;
     }
+    @Transactional
+    @Override
+    public List<ResponseBoard.list> getMyBoard(String userId){
+        User user = userRepository.findByUserid(userId);
+        if(user == null){ //유저가 없을 경우
+            throw new NotFoundUserException();
+        }
+        List<ResponseBoard.list> list = new ArrayList<>();
+
+        List<Board> boardList = boardRepository.findByUser(user);
+        if(!boardList.isEmpty()){//게시판이 있을 경우
+            for(Board board : boardList){
+                list.add(ResponseBoard.list.of(board));
+            }
+        }
+
+        return list;
+    }
+
     //좋아요
     @Transactional
     @Override

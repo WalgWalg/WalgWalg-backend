@@ -49,6 +49,25 @@ public class BoardController {
                 .build(), HttpStatus.OK);
     }
 
+    @GetMapping("/board/myBoard")
+    public ResponseEntity<ResponseMessage> getMyBoard(HttpServletRequest request){
+        Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
+        String userId = null;
+        if(token.isPresent()){
+            JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token.get());
+            userId = jwtAuthToken.getClaims().getSubject();
+        }
+
+        List<ResponseBoard.list> response = boardService.getMyBoard(userId);
+
+        return new ResponseEntity<>(ResponseMessage.builder()
+                .status(HttpStatus.OK.value())
+                .message("내가 작성한 게시판 조회 성공")
+                .list(response)
+                .build(), HttpStatus.OK);
+    }
+    
+    //좋아요
     @PostMapping("/board/like")
     public ResponseEntity<ResponseMessage> addLike(HttpServletRequest request, @RequestBody Map<String, Long> boardId){
         Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
@@ -57,7 +76,7 @@ public class BoardController {
             JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token.get());
             userid = jwtAuthToken.getClaims().getSubject();
         }
-        boardService.addLike(userid, boardId.get(boardId));
+        boardService.addLike(userid, boardId.get("boardId"));
         ResponseMessage response = ResponseMessage.builder()
                 .status(HttpStatus.OK.value())
                 .message("좋아요 추가 성공")
@@ -90,6 +109,7 @@ public class BoardController {
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    //스크랩
     @PostMapping("/board/add/scrap")
     public ResponseEntity<ResponseMessage> addScrap(HttpServletRequest request, @Valid @RequestBody RequestBoard.scrap requestDto){
         Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
