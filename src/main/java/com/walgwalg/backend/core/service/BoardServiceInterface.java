@@ -14,4 +14,5 @@ public interface BoardServiceInterface {
     void registerBoard(String userid, RequestBoard.register requestDto);
     ResponseBoard.getBoard getBoard(Long boardId);
     List<ResponseBoard.list> getMyBoard(String userId);
+    void deleteBoard(String userId, Long boardId);
 }

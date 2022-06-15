@@ -139,6 +139,61 @@ public class BoardServiceTests {
     }
     @Test
     @Transactional
+    @DisplayName("게시판 삭제 테스트")
+    void deleteBoard(){
+        User user = User.builder()
+                .userid("userid")
+                .password("password")
+                .build();
+        user = userRepository.save(user);
+        //게시판 등록1
+        Walk walk = Walk.builder()
+                .user(user)
+                .location("광교호수공원")
+                .build();
+        walk = walkRepository.save(walk);
+        RequestBoard.register requestDto = RequestBoard.register.builder()
+                .walkId(walk.getId())
+                .title("게시판 제목")
+                .contents("내용입니다.")
+                .build();
+        boardService.registerBoard("userid", requestDto);
+        Board board = boardRepository.findByUserAndTitle(user, "게시판 제목");
+        //삭제
+        boardService.deleteBoard("userid", board.getId());
+        assertNull(boardRepository.findByUserAndTitle(user, "게시판 제목"));
+    }
+    @Test
+    @Transactional
+    @DisplayName("게시판 삭제 테스트")
+    void deleteBoardWhenExistLikes(){
+        User user = User.builder()
+                .userid("userid")
+                .password("password")
+                .build();
+        user = userRepository.save(user);
+        //게시판 등록1
+        Walk walk = Walk.builder()
+                .user(user)
+                .location("광교호수공원")
+                .build();
+        walk = walkRepository.save(walk);
+        RequestBoard.register requestDto = RequestBoard.register.builder()
+                .walkId(walk.getId())
+                .title("게시판 제목")
+                .contents("내용입니다.")
+                .build();
+        boardService.registerBoard("userid", requestDto);
+        Board board = boardRepository.findByUserAndTitle(user, "게시판 제목");
+        //좋아요
+        boardService.addLike("userid", board.getId());
+        //삭제
+        boardService.deleteBoard("userid", board.getId());
+        assertNull(boardRepository.findByUserAndTitle(user, "게시판 제목"));
+        assertNull(likesRepository.findByUserAndBoard(user, board));
+    }
+    @Test
+    @Transactional
     @DisplayName("좋아요 추가 테스트")
     void addLikeTest(){
         User user = User.builder()
