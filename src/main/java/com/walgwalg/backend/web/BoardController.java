@@ -66,7 +66,22 @@ public class BoardController {
                 .list(response)
                 .build(), HttpStatus.OK);
     }
-    
+    @DeleteMapping("/board/{boardId}")
+    public ResponseEntity<ResponseMessage> deleteBoard(HttpServletRequest request, @PathVariable Long boardId){
+        Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
+        String userId = null;
+        if(token.isPresent()){
+            JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token.get());
+            userId = jwtAuthToken.getClaims().getSubject();
+        }
+
+        boardService.deleteBoard(userId, boardId);
+
+        return new ResponseEntity<>(ResponseMessage.builder()
+                .status(HttpStatus.OK.value())
+                .message("게시판 삭제 성공")
+                .build(), HttpStatus.OK);
+    }
     //좋아요
     @PostMapping("/board/like")
     public ResponseEntity<ResponseMessage> addLike(HttpServletRequest request, @RequestBody Map<String, Long> boardId){

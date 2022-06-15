@@ -105,6 +105,20 @@ public class BoardService implements BoardServiceInterface {
         return list;
     }
 
+    @Transactional
+    @Override
+    public void deleteBoard(String userId, Long boardId){
+        User user = userRepository.findByUserid(userId);
+        if(user == null){ //유저가 없을 경우
+            throw new NotFoundUserException();
+        }
+        Board board = boardRepository.findByIdAndUser(boardId, user);
+        if(board == null){
+            throw new NotFoundBoardException();
+        }
+        boardRepository.delete(board);
+    }
+
     //좋아요
     @Transactional
     @Override

@@ -14,4 +14,5 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Board findByUserAndTimestamp(User user, Date timestamp);
     Board findByUserAndTitle(User user, String title);
     List<Board> findByUser(User user);
+    Board findByIdAndUser(Long id ,User user);
 }

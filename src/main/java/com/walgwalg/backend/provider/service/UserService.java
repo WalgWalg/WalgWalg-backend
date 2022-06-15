@@ -111,16 +111,14 @@ public class UserService implements UserServiceInterface {
     @Override
     public Optional<ResponseUser.Token> updateAccessToken(String token){
         if(token == null || token.equals("null")){
-            System.out.println("토큰없음");
-            //throw new CustomJwtRuntimeException();
+            throw new CustomJwtRuntimeException();
         }
         User user = userRepository.findByRefreshToken(token);
         if(user == null){
             throw new NotFoundUserException();
         }
         if(!user.getRefreshToken().equals(token)){
-            System.out.println("디비랑 똑같지 않음");
-           // throw new CustomJwtRuntimeException();
+            throw new CustomJwtRuntimeException();
         }
         //토큰 유효성 검증
         JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token);
