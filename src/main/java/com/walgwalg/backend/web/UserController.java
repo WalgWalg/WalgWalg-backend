@@ -75,4 +75,9 @@ public class UserController {
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    @GetMapping("/dev")
+    public String dev(){
+        System.out.println("dev 실행");
+        return "Hello world!";
+    }
 }
