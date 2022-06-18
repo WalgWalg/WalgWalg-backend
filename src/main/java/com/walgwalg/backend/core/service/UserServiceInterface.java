@@ -13,7 +13,7 @@ public interface UserServiceInterface {
     void register(RequestUser.register registerDto);
     Optional<ResponseUser.login> login(RequestUser.login loginDto);
     void changeUserInfo(String userid, RequestUser.changeInfo changeInfoDto);
-    List<ResponseUser.MyLike> listLikeBoard(String userid);
+    Optional<ResponseUser.Token> updateAccessToken(String token);
     String createAccessToken(String userid);
     String createRefreshToken(String userid);
 }

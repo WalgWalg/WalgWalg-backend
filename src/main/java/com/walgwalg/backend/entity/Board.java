@@ -3,6 +3,7 @@ package com.walgwalg.backend.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -22,7 +23,8 @@ public class Board {
     @Column(name = "title")
     private String title; //제목
 
-    @Column(name = "date")
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
     private Date timestamp = new Date();
 
     @OneToMany(mappedBy = "board")
@@ -35,23 +37,28 @@ public class Board {
     @JoinColumn(name = "walk_id")
     private Walk walk; // 산책 정보
 
-    @OneToMany(mappedBy = "board")
-    private List<Likes> likes = new ArrayList<>(); //좋아요
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Likes> likesList = new ArrayList<>(); //좋아요
 
-    @OneToMany(mappedBy = "board")
-    private List<Scrap> scraps = new ArrayList<>(); //스크랩
+    @OneToMany(mappedBy = "board",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Scrap> scrapList = new ArrayList<>(); //스크랩
 
     @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user; // 유저
 
     @Builder
-    public Board(String title,Date timestamp, List<HashTag> hashTags,String contents,Walk walk, User user){
+    public Board(String title,String contents,Walk walk, User user){
         this.title = title;
-        this.timestamp =timestamp;
-        this.hashTags = hashTags;
         this.contents = contents;
         this.walk = walk;
         this.user = user;
     }
+    public void addLikes(Likes likes){
+        this.likesList.add(likes);
+    }
+    public void addScrap(Scrap scrap){
+        this.scrapList.add(scrap);
+    }
+    public void addHashTag(HashTag hashTag){this.hashTags.add(hashTag);}
 }

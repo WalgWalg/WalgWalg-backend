@@ -5,6 +5,7 @@ import com.walgwalg.backend.core.service.UserServiceInterface;
 import com.walgwalg.backend.entity.Board;
 import com.walgwalg.backend.entity.Likes;
 import com.walgwalg.backend.entity.User;
+import com.walgwalg.backend.exception.errors.CustomJwtRuntimeException;
 import com.walgwalg.backend.exception.errors.LoginFailedException;
 import com.walgwalg.backend.exception.errors.NotFoundUserException;
 import com.walgwalg.backend.exception.errors.RegisterFailedException;
@@ -106,19 +107,32 @@ public class UserService implements UserServiceInterface {
         //유저 정보 수정
         user.changeUserInfo(encryptedPassword,changeInfoDto.getNickname(),changeInfoDto.getAddress(),salt);
     }
-    @Override
     @Transactional
-    public List<ResponseUser.MyLike> listLikeBoard(String userid){
-        User user = userRepository.findByUserid(userid); //유저 꺼내기
-        List<Likes> likeList = likeRepository.findByUser(user);//좋아요 리스트 꺼내기
-
-        List<ResponseUser.MyLike> boards =new ArrayList<>();
-        for(Likes likeBoard : likeList){
-            Board board = boardRepository.findByLikes(likeBoard);
-            boards.add(ResponseUser.MyLike.of(board));
+    @Override
+    public Optional<ResponseUser.Token> updateAccessToken(String token){
+        if(token == null || token.equals("null")){
+            throw new CustomJwtRuntimeException();
         }
-        //Dto로 변환
-        return boards;
+        User user = userRepository.findByRefreshToken(token);
+        if(user == null){
+            throw new NotFoundUserException();
+        }
+        if(!user.getRefreshToken().equals(token)){
+            throw new CustomJwtRuntimeException();
+        }
+        //토큰 유효성 검증
+        JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token);
+        if(!jwtAuthToken.validate() || !jwtAuthToken.getClaims().get("role").equals(Role.USER.getCode())){
+         return Optional.empty();
+        }
+        String id = String.valueOf(jwtAuthToken.getClaims().getSubject());
+        String accessToken = createAccessToken(id); //accessToken 재발급
+
+        ResponseUser.Token newToken = ResponseUser.Token.builder()
+                .accessToken(accessToken)
+                .refreshToken(token)
+                .build();
+        return Optional.ofNullable(newToken);
     }
     @Override
     public String createAccessToken(String userid) {

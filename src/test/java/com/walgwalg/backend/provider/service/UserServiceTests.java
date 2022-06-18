@@ -198,38 +198,4 @@ public class UserServiceTests {
         User user1 = userRepository.findByUserid("userid");
         System.out.println(user1.getPassword()+" "+user1.getNickname()+" "+user1.getAddress());
     }
-
-    @Test
-    @Transactional
-    @DisplayName("좋아요 리스트 테스트(성공)")
-    void ListLikeBoardTest(){
-        User user = User.builder()
-                .userid("userid")
-                .password("password")
-                .nickname("nick")
-                .address("address")
-                .build();
-        userRepository.save(user);
-        //게시판
-        Board board = Board.builder()
-                .title("게시판")
-                .build();
-        boardRepository.save(board);
-        Board board1 = Board.builder()
-                .title("게시판1")
-                .build();
-        boardRepository.save(board1);
-
-        //좋아요
-        Likes like = Likes.builder().board(board).user(user).build();
-        likeRepository.save(like);
-        Likes like1 = Likes.builder().board(board1).user(user).build();
-        likeRepository.save(like1);
-        //좋아요 리스트 출력
-        System.out.println("좋아요 리스트");
-        List<ResponseUser.MyLike> list = userService.listLikeBoard("userid");
-        for(ResponseUser.MyLike myLike : list)
-            System.out.println(myLike.getTitle());
-    }
-
 }

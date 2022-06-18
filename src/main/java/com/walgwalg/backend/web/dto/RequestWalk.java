@@ -1,7 +1,9 @@
 package com.walgwalg.backend.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.Column;
@@ -36,12 +38,12 @@ public class RequestWalk {
         @NotEmpty(message = "날짜가 비어있음")
         private Date walkDate;
         @NotEmpty(message = "걸음수가 비어있음")
-        private String step_count;
+        private Integer step_count;
         @NotEmpty(message = "거리가 비어있음")
-        private String distance;
+        private float distance;
         @NotEmpty(message = "칼로리가 비어있음")
-        private String calorie;
+        private Integer calorie;
         @NotEmpty(message = "소요시간이 비어있음")
-        private String walkTime;
+        private Integer walkTime;
     }
 }
