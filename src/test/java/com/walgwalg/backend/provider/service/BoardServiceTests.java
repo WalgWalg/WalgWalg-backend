@@ -246,32 +246,6 @@ public class BoardServiceTests {
 
     @Test
     @Transactional
-    @DisplayName("스크랩 추가 테스트")
-    void addScrap(){
-        User user = User.builder()
-                .userid("userid")
-                .password("password")
-                .build();
-        userRepository.save(user);
-        //게시물 작성
-        Board board = Board.builder()
-                .title("title")
-                .user(userRepository.findByUserid("userid"))
-                .build();
-        boardRepository.save(board);
-
-        RequestBoard.scrap requestDto = RequestBoard.scrap.builder()
-                .writeDate(board.getTimestamp())
-                .writerId(board.getUser().getUserid())
-                .build();
-
-        //스크랩
-        boardService.addScrap("userid", requestDto);
-        assertNotNull(scrapRepository.findByUser(userRepository.findByUserid("userid")));
-    }
-
-    @Test
-    @Transactional
     @DisplayName("좋아요 리스트 테스트(성공)")
     void ListLikeBoardTest(){
         User user = User.builder()
