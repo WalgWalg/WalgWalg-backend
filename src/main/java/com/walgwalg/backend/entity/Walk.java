@@ -5,10 +5,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Table(name="walk")
 @Entity
@@ -16,8 +16,8 @@ import java.util.List;
 @NoArgsConstructor
 public class Walk {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @Column(name = "walk_id")
+    private String id = UUID.randomUUID().toString();
 
     @Column(name = "walk_date")
     private Date walkDate; //산책날짜
@@ -32,7 +32,8 @@ public class Walk {
     private Integer calorie; //칼로리
 
     @Column(name="walk_time")
-    private Integer walkTime; //소요시간
+    @Temporal(TemporalType.TIME)
+    private Date walkTime; //소요시간
 
     @Column(name = "course")
     private String course; //산책 코스 사진 경로
@@ -51,7 +52,7 @@ public class Walk {
     private List<Gps> gpsList = new ArrayList<>(); // gps
 
     @Builder
-    public Walk(User user, Date walkDate, Integer step_count, float distance, Integer calorie, Integer walkTime,
+    public Walk(User user, Date walkDate, Integer step_count, float distance, Integer calorie, Date walkTime,
                 String course, String location){
         this.user = user;
         this.walkDate = walkDate;
@@ -62,9 +63,8 @@ public class Walk {
         this.course = course;
         this.location = location;
     }
-    public void updateWalk(Date walkDate, Integer step_count, float distance, Integer calorie, Integer walkTime,
+    public void updateWalk(Integer step_count, float distance, Integer calorie, Date walkTime,
                            String course){
-        this.walkDate = walkDate;
         this.step_count = step_count;
         this.distance = distance;
         this.calorie = calorie;

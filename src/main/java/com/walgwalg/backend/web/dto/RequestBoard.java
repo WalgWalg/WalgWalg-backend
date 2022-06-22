@@ -19,7 +19,7 @@ public class RequestBoard {
     @AllArgsConstructor
     public static class register{
         @NotNull( message = "산책번호가 비어있음")
-        private Long walkId;
+        private String walkId;
         @NotNull( message = "제목이 비어있음")
         private String title;
         @Builder.Default

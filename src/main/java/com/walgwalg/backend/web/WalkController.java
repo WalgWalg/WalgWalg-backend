@@ -1,5 +1,6 @@
 package com.walgwalg.backend.web;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.walgwalg.backend.provider.security.JwtAuthToken;
 import com.walgwalg.backend.provider.security.JwtAuthTokenProvider;
 import com.walgwalg.backend.provider.service.WalkService;
@@ -8,13 +9,18 @@ import com.walgwalg.backend.web.dto.ResponseGps;
 import com.walgwalg.backend.web.dto.ResponseMessage;
 import com.walgwalg.backend.web.dto.ResponseWalk;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -30,7 +36,7 @@ public class WalkController {
             JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token.get());
             userid = jwtAuthToken.getClaims().getSubject();
         }
-        Long walkId=walkService.startWalk(userid, requestDto.getWalkDate(), requestDto.getLocation());
+        Map<String, String> walkId = walkService.startWalk(userid, requestDto.getWalkDate());
         ResponseMessage response = ResponseMessage.builder()
                 .status(HttpStatus.OK.value())
                 .message("산책 기록 시작 성공")
@@ -46,7 +52,7 @@ public class WalkController {
             JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token.get());
             userid = jwtAuthToken.getClaims().getSubject();
         }
-        walkService.addGps(userid, requestDto.getWalkDate(),requestDto.getLatitude(),requestDto.getLongitude());
+        walkService.addGps(userid, requestDto.getWalkId(),requestDto.getLatitude(),requestDto.getLongitude());
         ResponseMessage response = ResponseMessage.builder()
                 .status(HttpStatus.OK.value())
                 .message("gps 등록 성공")
@@ -54,7 +60,7 @@ public class WalkController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @GetMapping("walk/{walkId}/gps")
-    public ResponseEntity<ResponseMessage> addGps(@PathVariable Long walkId){
+    public ResponseEntity<ResponseMessage> getGps(@PathVariable String walkId){
         List<ResponseGps.gps> gpsList = walkService.getGps(walkId);
         ResponseMessage response = ResponseMessage.builder()
                 .status(HttpStatus.OK.value())
@@ -66,14 +72,19 @@ public class WalkController {
     @PostMapping("/walk/finish")
     public ResponseEntity<ResponseMessage> registerWalk(HttpServletRequest request,
                                                         @RequestPart(value = "file", required = false) MultipartFile file,
-                                                        @RequestPart(value = "requestDto") RequestWalk.registerWalk requestDto){
+                                                        @Valid @RequestPart(value = "requestDto") RequestWalk.registerWalk requestDto){
         Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
         String userid = null;
         if(token.isPresent()){
             JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token.get());
             userid = jwtAuthToken.getClaims().getSubject();
         }
-        walkService.registerWalk(userid,file, requestDto);
+        try{
+            walkService.registerWalk(userid,file, requestDto.getWalkId(), requestDto.getStep_count(),requestDto.getDistance(), requestDto.getCalorie(),requestDto.getWalkTime());
+
+        }catch (ParseException e){
+            System.out.println("산책 시간 타입 변경 실패");
+        }
         ResponseMessage response = ResponseMessage.builder()
                 .status(HttpStatus.OK.value())
                 .message("산책 등록 성공")
@@ -98,7 +109,7 @@ public class WalkController {
     }
 
     @DeleteMapping("/walk/{walkId}")
-    public ResponseEntity<ResponseMessage> deleteWalk(HttpServletRequest request, @PathVariable Long walkId ){
+    public ResponseEntity<ResponseMessage> deleteWalk(HttpServletRequest request, @PathVariable String walkId ){
         Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
         String userId = null;
         if(token.isPresent()){
@@ -112,4 +123,5 @@ public class WalkController {
                 .message("산책 삭제 성공")
                 .build(), HttpStatus.OK);
     }
+
 }

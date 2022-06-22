@@ -9,12 +9,12 @@ public class ResponseWalk {
     @Builder
     @Data
     public static class list {
-        private Long id;
+        private String id;
         private Date walkDate;
         private Integer step_count;
         private float distance;
         private Integer calorie;
-        private Integer walkTime;
+        private Date walkTime;
         private String course;
         private String location;
     }

@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.Column;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 public class RequestWalk {
@@ -24,26 +25,26 @@ public class RequestWalk {
     @Builder
     @Data
     public static class addGps{
-        @NotEmpty(message = "날짜가 비어있음")
-        private Date walkDate;
-        @NotEmpty(message = "위도가 비어있음")
+        @NotNull(message = "산책번호가 비어있음")
+        private String walkId;
+        @NotNull(message = "위도가 비어있음")
         private double latitude;
-        @NotEmpty(message = "경도가 비어있음")
+        @NotNull(message = "경도가 비어있음")
         private double longitude;
     }
 
     @Builder
     @Data
     public static class registerWalk{
-        @NotEmpty(message = "날짜가 비어있음")
-        private Date walkDate;
-        @NotEmpty(message = "걸음수가 비어있음")
+        @NotNull(message = "산책번호가 비어있음")
+        private String walkId;
+        @NotNull(message = "걸음수가 비어있음")
         private Integer step_count;
-        @NotEmpty(message = "거리가 비어있음")
+        @NotNull(message = "거리가 비어있음")
         private float distance;
-        @NotEmpty(message = "칼로리가 비어있음")
+        @NotNull(message = "칼로리가 비어있음")
         private Integer calorie;
-        @NotEmpty(message = "소요시간이 비어있음")
-        private Integer walkTime;
+        @NotNull(message = "산책시간이 비어있음")
+        private String walkTime;
     }
 }
