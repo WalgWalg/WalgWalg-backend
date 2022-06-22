@@ -18,9 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -49,8 +49,8 @@ public class WalkServiceTests {
         userRepository.save(user);
 
         Date date = new Date();
-        Long walkId = walkService.startWalk("userid", date, "광교호수공원");
-        assertNotNull(walkRepository.findAll());
+        Map<String, String> walkId = walkService.startWalk("userid", date);
+        assertNotNull(walkId.get("walkId"));
     }
 
     @Test
@@ -70,9 +70,9 @@ public class WalkServiceTests {
                 .walkDate(date)
                 .location("광교호수공원")
                 .build();
-        walkRepository.save(walk);
+        walk = walkRepository.save(walk);
         //Gps 등록
-        walkService.addGps("userid",date, 18.999,20.8888);
+        walkService.addGps("userid",walk.getId(), 18.999,20.8888);
         assertNotNull(gpsRepository.findAll());
     }
     @Test
@@ -94,8 +94,8 @@ public class WalkServiceTests {
                 .build();
         walk = walkRepository.save(walk);
         //Gps 등록
-        walkService.addGps("userid",date, 18.999,20.8888);
-        walkService.addGps("userid",date, 28.999,30.8888);
+        walkService.addGps("userid",walk.getId(), 18.999,20.8888);
+        walkService.addGps("userid",walk.getId(), 28.999,30.8888);
         //Gps 조회
         List<ResponseGps.gps> list =walkService.getGps(walk.getId());
         for(ResponseGps.gps gps : list)
@@ -104,7 +104,7 @@ public class WalkServiceTests {
     @Test
     @Transactional
     @DisplayName("산책 저장 테스트")
-    void registerWalk() throws IOException {
+    void registerWalk() throws IOException, ParseException {
         User user = User.builder()
                 .userid("userid")
                 .password("password")
@@ -118,19 +118,20 @@ public class WalkServiceTests {
                 .walkDate(date)
                 .location("광교호수공원")
                 .build();
-        walkRepository.save(walk);
+       walk = walkRepository.save(walk);
 
         RequestWalk.registerWalk registerWalk = RequestWalk.registerWalk.builder()
-                .walkDate(date)
+                .walkId(walk.getId())
                 .step_count(1000)
                 .distance(1234)
                 .calorie(400)
-                .walkTime(99)
+                .walkTime("00:10:30")
                 .build();
         MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "test2.png",
                 "image/png", "test data".getBytes());
         //산책 등록
-        walkService.registerWalk("userid",mockMultipartFile, registerWalk);
+        walkService.registerWalk("userid",mockMultipartFile, registerWalk.getWalkId(),registerWalk.getStep_count(),
+                registerWalk.getDistance(),registerWalk.getCalorie(),registerWalk.getWalkTime());
     }
     @Test
     @Transactional
@@ -149,26 +150,21 @@ public class WalkServiceTests {
                 .walkDate(date)
                 .location("광교호수공원")
                 .build();
-        walkRepository.save(walk);
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
-        Date time = format.parse("08:10:00");
-
+        walk = walkRepository.save(walk);
         RequestWalk.registerWalk registerWalk = RequestWalk.registerWalk.builder()
-                .walkDate(date)
+                .walkId(walk.getId())
                 .step_count(1000)
                 .distance(1234)
                 .calorie(400)
-                .walkTime(69)
+                .walkTime("00:10:30")
                 .build();
         MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "test2.png",
                 "image/png", "test data".getBytes());
         //산책 등록
-        walkService.registerWalk("userid",mockMultipartFile, registerWalk);
+        walkService.registerWalk("userid",mockMultipartFile, registerWalk.getWalkId(),registerWalk.getStep_count(),
+                registerWalk.getDistance(),registerWalk.getCalorie(),registerWalk.getWalkTime());
         //산책 조회
         List<ResponseWalk.list> list =walkService.getAllMyWalk("userid");
-        for(ResponseWalk.list list1 : list){
-            System.out.println(list1.getWalkTime());
-        }
         assertNotNull(list);
     }
     @Test

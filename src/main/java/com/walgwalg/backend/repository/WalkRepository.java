@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 import java.util.Date;
 import java.util.List;
 
-public interface WalkRepository extends JpaRepository<Walk,Long> {
+public interface WalkRepository extends JpaRepository<Walk, String> {
     Walk findByUserAndWalkDate(User user, Date walkDate);
-    Walk findByUserAndId(User user, Long id);
+    Walk findByUserAndId(User user, String id);
     List<Walk> findByUser(User user);
 }

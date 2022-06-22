@@ -8,6 +8,7 @@ import com.walgwalg.backend.core.service.WalkServiceInterface;
 import com.walgwalg.backend.entity.Gps;
 import com.walgwalg.backend.entity.User;
 import com.walgwalg.backend.entity.Walk;
+import com.walgwalg.backend.exception.errors.DuplicatedWalkException;
 import com.walgwalg.backend.exception.errors.NotFoundUserException;
 import com.walgwalg.backend.exception.errors.NotFoundWalkException;
 import com.walgwalg.backend.repository.GpsRepository;
@@ -26,6 +27,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -42,28 +45,33 @@ public class WalkService implements WalkServiceInterface {
 
     @Override
     @Transactional
-    public Long startWalk(String userid, Date walkDate, String location){
-        User user = userRepository.findByUserid(userid);
-        if(user == null){
-            throw new NotFoundUserException();
-        }
-        Walk walk = Walk.builder()
-                .user(user)
-                .walkDate(walkDate)
-                .location(location)
-                .build();
-        walk = walkRepository.save(walk);
-        user.addWalk(walk);
-        return walk.getId();
-    }
-    @Override
-    @Transactional
-    public void addGps(String userid, Date walkDate, Double latitude, Double longitude){
+    public Map<String, String> startWalk(String userid, Date walkDate){
         User user = userRepository.findByUserid(userid);
         if(user == null){
             throw new NotFoundUserException();
         }
         Walk walk = walkRepository.findByUserAndWalkDate(user, walkDate);
+        if(walk != null){
+            throw new DuplicatedWalkException();
+        }
+        walk = Walk.builder()
+                .user(user)
+                .walkDate(walkDate)
+                .build();
+        walk = walkRepository.save(walk);
+        user.addWalk(walk);
+        Map<String, String> map = new HashMap<>();
+        map.put("walkId", walk.getId());
+        return map;
+    }
+    @Override
+    @Transactional
+    public void addGps(String userid, String walkId, Double latitude, Double longitude){
+        User user = userRepository.findByUserid(userid);
+        if(user == null){
+            throw new NotFoundUserException();
+        }
+        Walk walk = walkRepository.findByUserAndId(user, walkId);
         if(walk == null){
             throw new NotFoundWalkException();
         }
@@ -77,7 +85,7 @@ public class WalkService implements WalkServiceInterface {
     }
     @Override
     @Transactional
-    public List<ResponseGps.gps> getGps(Long walkId){
+    public List<ResponseGps.gps> getGps(String walkId){
         Walk walk = walkRepository.findById(walkId).orElseThrow(()-> new NotFoundWalkException());
         List<Gps> gpsList = gpsRepository.findByWalk(walk);
 
@@ -93,12 +101,13 @@ public class WalkService implements WalkServiceInterface {
     }
     @Override
     @Transactional
-    public void registerWalk(String userid,MultipartFile course, RequestWalk.registerWalk requestDto){
+    public void registerWalk(String userid,MultipartFile course,String walkId, Integer stepCount,
+                             float distance, Integer calorie, String walkTime) throws ParseException {
         User user = userRepository.findByUserid(userid);
         if(user == null){
             throw new NotFoundUserException();
         }
-        Walk walk = walkRepository.findByUserAndWalkDate(user, requestDto.getWalkDate());
+        Walk walk = walkRepository.findByUserAndId(user, walkId);
         if(walk == null){
             throw new NotFoundWalkException();
         }
@@ -107,14 +116,17 @@ public class WalkService implements WalkServiceInterface {
         try {
             url = upload(course, "course");
         }catch (IOException e){
-         System.out.println("s3 등록 실패");
+            System.out.println("s3 등록 실패");
         }
+        //시간 string -> date로 타입 변경
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        Date time = format.parse(walkTime);
+
         //산책 추가 정보 등록
-        walk.updateWalk(requestDto.getWalkDate(), requestDto.getStep_count(), requestDto.getDistance(),
-                requestDto.getCalorie(),requestDto.getWalkTime(), url);
+        walk.updateWalk(stepCount, distance,
+                calorie,time, url);
         user.addWalk(walk);
     }
-
     @Override
     @Transactional
     public List<ResponseWalk.list> getAllMyWalk(String userid){
@@ -139,8 +151,10 @@ public class WalkService implements WalkServiceInterface {
         }
         return list;
     }
+
+    @Override
     @Transactional
-    public void deleteWalk(String userId, Long walkId){
+    public void deleteWalk(String userId, String walkId){
         User user = userRepository.findByUserid(userId);
         if(user == null){
             throw new NotFoundUserException();
