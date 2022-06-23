@@ -38,6 +38,8 @@ public class BoardServiceTests {
     private WalkRepository walkRepository;
     @Autowired
     private  UserService userService;
+    @Autowired
+    private LikeService likeService;
 
     @Test
     @Transactional
@@ -165,7 +167,7 @@ public class BoardServiceTests {
     }
     @Test
     @Transactional
-    @DisplayName("게시판 삭제 테스트")
+    @DisplayName("게시판 삭제 테스트(좋아요가 있을 때)")
     void deleteBoardWhenExistLikes(){
         User user = User.builder()
                 .userid("userid")
@@ -186,94 +188,12 @@ public class BoardServiceTests {
         boardService.registerBoard("userid", requestDto);
         Board board = boardRepository.findByUserAndTitle(user, "게시판 제목");
         //좋아요
-        boardService.addLike("userid", board.getId());
+        likeService.addLike("userid", board.getId());
         //삭제
         boardService.deleteBoard("userid", board.getId());
+        //해당 게시판의 좋아요도 다 삭제되어야 함!
         assertNull(boardRepository.findByUserAndTitle(user, "게시판 제목"));
         assertNull(likesRepository.findByUserAndBoard(user, board));
     }
-    @Test
-    @Transactional
-    @DisplayName("좋아요 추가 테스트")
-    void addLikeTest(){
-        User user = User.builder()
-                .userid("userid")
-                .password("password")
-                .build();
-        userRepository.save(user);
-        //게시물 작성
-        Board board = Board.builder()
-                .title("title")
-                .user(userRepository.findByUserid("userid"))
-                .build();
-        board = boardRepository.save(board);
-        user.addBoard(board);
 
-        //좋아요
-        boardService.addLike("userid", board.getId());
-        assertNotNull(likesRepository.findByUser(userRepository.findByUserid("userid")));
-        }
-    @Test
-    @Transactional
-    @DisplayName("좋아요 삭제 테스트")
-    void deleteLike(){
-
-        User user = User.builder()
-                .userid("userid")
-                .password("password")
-                .build();
-        userRepository.save(user);
-        //게시물 작성
-        Board board = Board.builder()
-                .title("title")
-                .user(userRepository.findByUserid("userid"))
-                .build();
-        boardRepository.save(board);
-        user.addBoard(board);
-        //좋아요
-        Likes likes = Likes.builder()
-                .user(user)
-                .board(board)
-                .build();
-        likesRepository.save(likes);
-        user.addLikes(likes);
-        board.addLikes(likes);
-        //좋아요 삭제
-        boardService.deleteLikeBoard(board.getId());
-        assertThrows(NotFoundBoardException.class,()->boardService.deleteLikeBoard(board.getId()));
-    }
-
-
-    @Test
-    @Transactional
-    @DisplayName("좋아요 리스트 테스트(성공)")
-    void ListLikeBoardTest(){
-        User user = User.builder()
-                .userid("userid")
-                .password("password")
-                .nickname("nick")
-                .address("address")
-                .build();
-        userRepository.save(user);
-        //게시판
-        Board board = Board.builder()
-                .title("게시판")
-                .build();
-        boardRepository.save(board);
-        Board board1 = Board.builder()
-                .title("게시판1")
-                .build();
-        boardRepository.save(board1);
-
-        //좋아요
-        Likes like = Likes.builder().board(board).user(user).build();
-        likesRepository.save(like);
-        Likes like1 = Likes.builder().board(board1).user(user).build();
-        likesRepository.save(like1);
-        //좋아요 리스트 출력
-        System.out.println("좋아요 리스트");
-        List<ResponseBoard.MyLike> list = boardService.listLikeBoard("userid");
-        for(ResponseBoard.MyLike myLike : list)
-            System.out.println(myLike.getTitle());
-    }
 }

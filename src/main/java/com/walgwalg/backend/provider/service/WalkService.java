@@ -140,7 +140,7 @@ public class WalkService implements WalkServiceInterface {
             ResponseWalk.list responseDto = ResponseWalk.list.builder()
                     .id(walk.getId())
                     .walkDate(walk.getWalkDate())
-                    .step_count(walk.getStep_count())
+                    .stepCount(walk.getStep_count())
                     .distance(walk.getDistance())
                     .calorie(walk.getCalorie())
                     .walkTime(walk.getWalkTime())

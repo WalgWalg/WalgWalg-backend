@@ -39,7 +39,7 @@ public class BoardController {
                 .build(), HttpStatus.OK);
     }
     @GetMapping("/board/{boardId}")
-    public ResponseEntity<ResponseMessage> getBoard(@PathVariable Long boardId){
+    public ResponseEntity<ResponseMessage> getBoard(@PathVariable String boardId){
         ResponseBoard.getBoard response = boardService.getBoard(boardId);
 
         return new ResponseEntity<>(ResponseMessage.builder()
@@ -67,7 +67,7 @@ public class BoardController {
                 .build(), HttpStatus.OK);
     }
     @DeleteMapping("/board/{boardId}")
-    public ResponseEntity<ResponseMessage> deleteBoard(HttpServletRequest request, @PathVariable Long boardId){
+    public ResponseEntity<ResponseMessage> deleteBoard(HttpServletRequest request, @PathVariable String boardId){
         Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
         String userId = null;
         if(token.isPresent()){
@@ -82,48 +82,7 @@ public class BoardController {
                 .message("게시판 삭제 성공")
                 .build(), HttpStatus.OK);
     }
-    //좋아요
-    @PostMapping("/board/like")
-    public ResponseEntity<ResponseMessage> addLike(HttpServletRequest request, @RequestBody Map<String, Long> boardId){
-        Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
-        String userid = null;
-        if(token.isPresent()){
-            JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token.get());
-            userid = jwtAuthToken.getClaims().getSubject();
-        }
-        boardService.addLike(userid, boardId.get("boardId"));
-        ResponseMessage response = ResponseMessage.builder()
-                .status(HttpStatus.OK.value())
-                .message("좋아요 추가 성공")
-                .build();
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-    @GetMapping("board/like")
-    public ResponseEntity<ResponseMessage> listLike(HttpServletRequest request){
-        Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
-        String userid =null;
-        if(token.isPresent()){
-            JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token.get());
-            userid = jwtAuthToken.getClaims().getSubject();
-        }
-        List<ResponseBoard.MyLike> list = boardService.listLikeBoard(userid);
-        ResponseMessage response = ResponseMessage.builder()
-                .status(HttpStatus.OK.value())
-                .message("좋아요 리스트 성공")
-                .list(list)
-                .build();
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-    @DeleteMapping("/board/like/{boardId}")
-    public ResponseEntity<ResponseMessage> deleteLike(@PathVariable Long boardId){
-        boardService.deleteLikeBoard(boardId);
 
-        ResponseMessage response = ResponseMessage.builder()
-                .status(HttpStatus.OK.value())
-                .message("게시판 좋아요 삭제")
-                .build();
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
     //스크랩
     @PostMapping("/board/add/scrap")
     public ResponseEntity<ResponseMessage> addScrap(HttpServletRequest request, @Valid @RequestBody RequestBoard.scrap requestDto){

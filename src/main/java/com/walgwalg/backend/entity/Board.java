@@ -9,16 +9,16 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Table(name = "board")
 @Entity
 @Getter
 @NoArgsConstructor
 public class Board {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @Column(name = "board_id")
+    private String id = UUID.randomUUID().toString();
 
     @Column(name = "title")
     private String title; //제목

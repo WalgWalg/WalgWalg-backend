@@ -63,7 +63,7 @@ public class BoardService implements BoardServiceInterface {
     }
     @Transactional
     @Override
-    public ResponseBoard.getBoard getBoard(Long boardId){
+    public ResponseBoard.getBoard getBoard(String boardId){
         Board board = boardRepository.findById(boardId).orElseThrow(()->new NotFoundBoardException());
         Walk walk = board.getWalk();
         List<String> hashTagList = new ArrayList<>();
@@ -107,7 +107,7 @@ public class BoardService implements BoardServiceInterface {
 
     @Transactional
     @Override
-    public void deleteBoard(String userId, Long boardId){
+    public void deleteBoard(String userId, String boardId){
         User user = userRepository.findByUserid(userId);
         if(user == null){ //유저가 없을 경우
             throw new NotFoundUserException();
@@ -118,37 +118,6 @@ public class BoardService implements BoardServiceInterface {
         }
         boardRepository.delete(board);
     }
-
-    //좋아요
-    @Transactional
-    @Override
-    public void addLike(String userid, Long boardId){
-        User user = userRepository.findByUserid(userid);
-        if(user == null){ //유저가 없을 경우
-            throw new NotFoundUserException();
-        }
-        Board board = boardRepository.findById(boardId).orElseThrow(()->new NotFoundBoardException());
-
-        Likes like = likesRepository.findByUserAndBoard(user, board);
-        if(like != null){ //이미 좋아요 눌렀을 경우
-            throw new DuplicatedLikeException();
-        }
-        //좋아요 추가
-        like = Likes.builder()
-                .user(user)
-                .board(board)
-                .build();
-        like = likesRepository.save(like);
-        user.addLikes(like);
-        board.addLikes(like);
-    }
-    @Transactional
-    @Override
-    public void deleteLikeBoard(Long boardId){
-        Board board = boardRepository.findById(boardId).orElseThrow(()->new NotFoundBoardException());
-        boardRepository.delete(board);
-    }
-
 
     @Transactional
     @Override
@@ -178,22 +147,5 @@ public class BoardService implements BoardServiceInterface {
         user.addScrap(scrap);
         board.addScrap(scrap);
     }
-    @Override
-    @Transactional
-    public List<ResponseBoard.MyLike> listLikeBoard(String userid){
-        User user = userRepository.findByUserid(userid); //유저 꺼내기
-        if(user == null){//유저가 없으면
-            throw new NotFoundUserException();
-        }
-        List<Likes> likeList = likesRepository.findByUser(user);//좋아요 리스트 꺼내기
 
-        List<ResponseBoard.MyLike> boards =new ArrayList<>();
-
-        for(Likes like : likeList){
-            Board board = like.getBoard();
-            boards.add(ResponseBoard.MyLike.of(board));
-        }
-        //Dto로 변환
-        return boards;
-    }
 }

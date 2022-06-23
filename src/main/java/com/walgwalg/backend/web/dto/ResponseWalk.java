@@ -11,11 +11,20 @@ public class ResponseWalk {
     public static class list {
         private String id;
         private Date walkDate;
-        private Integer step_count;
+        private Integer stepCount;
         private float distance;
         private Integer calorie;
         private Date walkTime;
         private String course;
         private String location;
+    }
+    @Builder
+    @Data
+    public static class calender{
+        private String id;
+        private Integer stepCount; //걸음수
+        private float distance;
+        private Date walkTime;
+
     }
 }

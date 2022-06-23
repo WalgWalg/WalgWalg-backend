@@ -1,6 +1,7 @@
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\util\SHA256Util.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\core\security\role\Role.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\core\service\BoardServiceInterface.java
+C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\core\service\LikeServiceInterface.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\entity\Likes.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\entity\User.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\WalgWalgApplication.java
@@ -18,6 +19,7 @@ C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\UserController.ja
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\exception\errors\NotFoundBoardException.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\exception\errors\DuplicatedLikeException.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\exception\GlobalExceptionHandler.java
+C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\LikeController.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\configuration\InterceptorConfig.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\provider\service\UserService.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\repository\BoardRepository.java
@@ -28,6 +30,7 @@ C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\entity\Scrap.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\core\service\WalkServiceInterface.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\provider\service\WalkService.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\dto\ResponseGps.java
+C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\dto\ResponseLike.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\exception\errors\LoginFailedException.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\entity\Gps.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\exception\errors\NotFoundWalkException.java
@@ -35,9 +38,11 @@ C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\dto\ResponseWalk.
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\interceptor\AuthInterceptor.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\exception\ErrorCode.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\repository\HashTagRepository.java
+C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\exception\errors\DuplicatedWalkException.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\dto\ResponseBoard.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\repository\LikesRepository.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\provider\security\JwtAuthToken.java
+C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\provider\service\LikeService.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\repository\ScrapRepository.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\configuration\WebConfig.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\BoardController.java
