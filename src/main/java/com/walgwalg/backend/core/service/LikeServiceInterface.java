@@ -8,6 +8,6 @@ import java.util.List;
 public interface LikeServiceInterface {
     void addLike(String userid, String boardId);
     List<ResponseLike.MyLike> listLikeBoard(String userid);
-    void deleteLikeBoard(String boardId);
+    void deleteLikeBoard(String userid,String boardId);
 
 }

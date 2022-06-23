@@ -107,4 +107,26 @@ public class GlobalExceptionHandler {
                 .build();
         return new ResponseEntity<>(response, code.getHttpStatus());
     }
+    @ExceptionHandler(NotFoundLikesException.class)
+    protected ResponseEntity<ResponseMessage> handleNotFoundLikesException(NotFoundLikesException e) {
+        ErrorCode code = ErrorCode.NOT_FOUND_LIKE;
+
+        ResponseMessage response = ResponseMessage.builder()
+                .status(code.getHttpStatus().value())
+                .message(code.getMessage())
+                .list(code.getCode())
+                .build();
+        return new ResponseEntity<>(response, code.getHttpStatus());
+    }
+    @ExceptionHandler(NotFoundScrapException.class)
+    protected ResponseEntity<ResponseMessage> handleNotFoundScrapException(NotFoundScrapException e) {
+        ErrorCode code = ErrorCode.NOT_FOUND_SCRAP;
+
+        ResponseMessage response = ResponseMessage.builder()
+                .status(code.getHttpStatus().value())
+                .message(code.getMessage())
+                .list(code.getCode())
+                .build();
+        return new ResponseEntity<>(response, code.getHttpStatus());
+    }
 }

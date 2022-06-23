@@ -118,34 +118,4 @@ public class BoardService implements BoardServiceInterface {
         }
         boardRepository.delete(board);
     }
-
-    @Transactional
-    @Override
-    public void addScrap(String userid, RequestBoard.scrap requestDto){
-        User user = userRepository.findByUserid(userid);
-        if(user == null){ //유저가 없을 경우
-            throw new NotFoundUserException();
-        }
-        User writer = userRepository.findByUserid(requestDto.getWriterId()); // 좋아요 누른 게시판의 작성자
-        if(user == null){//작성자가 없을 경우
-            throw new NotFoundUserException();
-        }
-        Board board = boardRepository.findByUserAndTimestamp(writer, requestDto.getWriteDate()); //작성자와 작성일자를 기준으로 게시판 찾기
-        if(board ==null){
-            throw new NotFoundBoardException();
-        }
-        Scrap scrap = scrapRepository.findByUserAndBoard(user, board);
-        if(scrap != null){ //이미 스크랩 했을 경우
-            throw new DuplicatedScrapException();
-        }
-        //스크랩 추가
-       scrap = Scrap.builder()
-                .user(user)
-                .board(board)
-                .build();
-        scrapRepository.save(scrap);
-        user.addScrap(scrap);
-        board.addScrap(scrap);
-    }
-
 }
