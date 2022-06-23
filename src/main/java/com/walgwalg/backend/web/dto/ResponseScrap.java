@@ -10,17 +10,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ResponseLike {
+public class ResponseScrap {
     @Data
     @Builder
-    public static class MyLike{
+    public static class MyScrap{
         private String boardId;
         private String title;
         private List<ResponseHashtag.Hashtag> hashTags;
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/seoul")
         private Date writeDate;
-        private Integer likeCount;
-        public static MyLike of(Board board){
+        private Integer scrapCount;
+        public static ResponseScrap.MyScrap of(Board board){
             List<ResponseHashtag.Hashtag> hashtagListDto = new ArrayList<>();
             List<HashTag> hashTags = board.getHashTags();
             if(hashTags != null){
@@ -29,12 +29,12 @@ public class ResponseLike {
                     hashtagListDto.add(hashtagDto);
                 }
             }
-            return MyLike.builder()
+            return MyScrap.builder()
                     .boardId(board.getId())
                     .title(board.getTitle())
                     .hashTags(hashtagListDto)
                     .writeDate(board.getTimestamp())
-                    .likeCount(board.getLikesList().size())
+                    .scrapCount(board.getScrapList().size())
                     .build();
         }
     }

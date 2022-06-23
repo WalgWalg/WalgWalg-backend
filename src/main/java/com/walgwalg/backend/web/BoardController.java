@@ -82,22 +82,4 @@ public class BoardController {
                 .message("게시판 삭제 성공")
                 .build(), HttpStatus.OK);
     }
-
-    //스크랩
-    @PostMapping("/board/add/scrap")
-    public ResponseEntity<ResponseMessage> addScrap(HttpServletRequest request, @Valid @RequestBody RequestBoard.scrap requestDto){
-        Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
-        String userid = null;
-        if(token.isPresent()){
-            JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token.get());
-            userid = jwtAuthToken.getClaims().getSubject();
-        }
-        boardService.addScrap(userid, requestDto);
-        ResponseMessage response = ResponseMessage.builder()
-                .status(HttpStatus.OK.value())
-                .message("스크랩 추가 성공")
-                .build();
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
 }

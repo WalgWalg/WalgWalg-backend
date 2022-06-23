@@ -6,12 +6,11 @@ import com.walgwalg.backend.entity.Likes;
 import com.walgwalg.backend.entity.User;
 import com.walgwalg.backend.exception.errors.DuplicatedLikeException;
 import com.walgwalg.backend.exception.errors.NotFoundBoardException;
+import com.walgwalg.backend.exception.errors.NotFoundLikesException;
 import com.walgwalg.backend.exception.errors.NotFoundUserException;
-import com.walgwalg.backend.provider.security.JwtAuthTokenProvider;
 import com.walgwalg.backend.repository.BoardRepository;
 import com.walgwalg.backend.repository.LikesRepository;
 import com.walgwalg.backend.repository.UserRepository;
-import com.walgwalg.backend.web.dto.ResponseBoard;
 import com.walgwalg.backend.web.dto.ResponseLike;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -50,13 +49,6 @@ public class LikeService implements LikeServiceInterface {
         board.addLikes(like);
     }
 
-    @Transactional
-    @Override
-    public void deleteLikeBoard(String boardId){
-        Board board = boardRepository.findById(boardId).orElseThrow(()->new NotFoundBoardException());
-        boardRepository.delete(board);
-    }
-
     @Override
     @Transactional
     public List<ResponseLike.MyLike> listLikeBoard(String userid){
@@ -76,5 +68,19 @@ public class LikeService implements LikeServiceInterface {
         return boards;
     }
 
+    @Transactional
+    @Override
+    public void deleteLikeBoard(String userid ,String boardId){
+        User user = userRepository.findByUserid(userid);
+        if(user == null){ //유저가 없을 경우
+            throw new NotFoundUserException();
+        }
+        Board board = boardRepository.findById(boardId).orElseThrow(()->new NotFoundBoardException());
+        Likes likes = likesRepository.findByUserAndBoard(user, board);
+        if(likes == null){
+            throw new NotFoundLikesException();
+        }
+        likesRepository.delete(likes);
+    }
 
 }
