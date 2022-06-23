@@ -32,8 +32,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService implements UserServiceInterface {
     private final UserRepository userRepository;
-    private final LikesRepository likeRepository;
-    private final BoardRepository boardRepository;
     private final JwtAuthTokenProvider jwtAuthTokenProvider;
 
     @Transactional

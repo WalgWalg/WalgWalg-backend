@@ -1,3 +1,4 @@
 com\walgwalg\backend\provider\service\UserServiceTests.class
-com\walgwalg\backend\provider\service\WalkServiceTests.class
 com\walgwalg\backend\provider\service\BoardServiceTests.class
+com\walgwalg\backend\provider\service\LikeServiceTests.class
+com\walgwalg\backend\provider\service\WalkServiceTests.class
