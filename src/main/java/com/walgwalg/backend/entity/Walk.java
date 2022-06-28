@@ -23,7 +23,7 @@ public class Walk {
     private Date walkDate; //산책날짜
 
     @Column(name ="step_count")
-    private Integer step_count; //걸음수
+    private Integer stepCount; //걸음수
 
     @Column(name="distance")
     private float distance; //거리
@@ -41,6 +41,9 @@ public class Walk {
     @Column(name="location")
     private String location; //위치 ex) 공원 이름 등
 
+    @Column(name = "address")
+    private String address;
+
     @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user; // 유저
@@ -52,20 +55,21 @@ public class Walk {
     private List<Gps> gpsList = new ArrayList<>(); // gps
 
     @Builder
-    public Walk(User user, Date walkDate, Integer step_count, float distance, Integer calorie, Date walkTime,
-                String course, String location){
+    public Walk(User user, Date walkDate, Integer stepCount, float distance, Integer calorie, Date walkTime,
+                String course, String location, String address){
         this.user = user;
         this.walkDate = walkDate;
-        this.step_count = step_count;
+        this.stepCount = stepCount;
         this.distance = distance;
         this.calorie = calorie;
         this.walkTime = walkTime;
         this.course = course;
         this.location = location;
+        this.address = address;
     }
-    public void updateWalk(Integer step_count, float distance, Integer calorie, Date walkTime,
+    public void updateWalk(Integer stepCount, float distance, Integer calorie, Date walkTime,
                            String course){
-        this.step_count = step_count;
+        this.stepCount = stepCount;
         this.distance = distance;
         this.calorie = calorie;
         this.walkTime = walkTime;

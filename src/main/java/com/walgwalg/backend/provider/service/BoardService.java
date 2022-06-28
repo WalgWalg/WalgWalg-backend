@@ -76,7 +76,7 @@ public class BoardService implements BoardServiceInterface {
                 .title(board.getTitle())
                 .contents(board.getContents())
                 .hashTags(hashTagList)
-                .step_count(walk.getStep_count())
+                .step_count(walk.getStepCount())
                 .distance(walk.getDistance())
                 .calorie(walk.getCalorie())
                 .course(walk.getCourse())

@@ -29,14 +29,14 @@ public class WalkController {
     private final WalkService walkService;
     private final JwtAuthTokenProvider jwtAuthTokenProvider;
     @PostMapping("walk/start")
-    public ResponseEntity<ResponseMessage> startWalk(HttpServletRequest request, @RequestBody RequestWalk.start requestDto){
+    public ResponseEntity<ResponseMessage> startWalk(HttpServletRequest request, @Valid @RequestBody RequestWalk.start requestDto){
         Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
         String userid = null;
         if(token.isPresent()){
             JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token.get());
             userid = jwtAuthToken.getClaims().getSubject();
         }
-        Map<String, String> walkId = walkService.startWalk(userid, requestDto.getWalkDate());
+        Map<String, String> walkId = walkService.startWalk(userid, requestDto.getWalkDate(), requestDto.getLocation(), requestDto.getAddress());
         ResponseMessage response = ResponseMessage.builder()
                 .status(HttpStatus.OK.value())
                 .message("산책 기록 시작 성공")
@@ -45,7 +45,7 @@ public class WalkController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @PostMapping("walk/gps")
-    public ResponseEntity<ResponseMessage> addGps(HttpServletRequest request, @RequestBody RequestWalk.addGps requestDto){
+    public ResponseEntity<ResponseMessage> addGps(HttpServletRequest request, @Valid @RequestBody RequestWalk.addGps requestDto){
         Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
         String userid = null;
         if(token.isPresent()){
@@ -122,6 +122,45 @@ public class WalkController {
                 .status(HttpStatus.OK.value())
                 .message("산책 삭제 성공")
                 .build(), HttpStatus.OK);
+    }
+    @GetMapping("/walk/calendar")
+    public ResponseEntity<ResponseMessage> getWalkForCalendar(HttpServletRequest request){
+        Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
+        String userId = null;
+        if(token.isPresent()){
+            JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token.get());
+            userId = jwtAuthToken.getClaims().getSubject();
+        }
+        Map<Date, ResponseWalk.calendar> list = walkService.getWalkForCalendar(userId);
+        return new ResponseEntity<>(ResponseMessage.builder()
+                .status(HttpStatus.OK.value())
+                .message("일별 산책 성공")
+                .list(list)
+                .build(), HttpStatus.OK);
+
+    }
+
+    @GetMapping("/walk/total")
+    public ResponseEntity<ResponseMessage> getTotalWalk(HttpServletRequest request,@RequestParam Date startDate, @RequestParam Date endDate){
+        Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
+        String userId = null;
+        if(token.isPresent()){
+            JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token.get());
+            userId = jwtAuthToken.getClaims().getSubject();
+        }
+        ResponseWalk.total response = null;
+        try {
+            response = walkService.getTotalWalk(userId, startDate, endDate);
+        }catch (ParseException e){
+            System.out.println("산책 통계 조회 실패");
+        }
+
+
+        return new ResponseEntity<>(ResponseMessage.builder()
+                .status(HttpStatus.OK.value())
+                .message("월별 산책 통계 조회 성공")
+                .build(), HttpStatus.OK);
+
     }
 
 }

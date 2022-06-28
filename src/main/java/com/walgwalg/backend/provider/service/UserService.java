@@ -135,7 +135,7 @@ public class UserService implements UserServiceInterface {
     @Override
     public String createAccessToken(String userid) {
         //유효기간 설정-2분
-        Date expiredDate = Date.from(LocalDateTime.now().plusMinutes(10).atZone(ZoneId.systemDefault()).toInstant());
+        Date expiredDate = Date.from(LocalDateTime.now().plusMinutes(50).atZone(ZoneId.systemDefault()).toInstant());
         //토큰 발급
         JwtAuthToken accessToken = jwtAuthTokenProvider.createAuthToken(userid, Role.USER.getCode(),expiredDate);
         return accessToken.getToken();

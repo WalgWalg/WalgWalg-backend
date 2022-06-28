@@ -45,7 +45,7 @@ public class WalkService implements WalkServiceInterface {
 
     @Override
     @Transactional
-    public Map<String, String> startWalk(String userid, Date walkDate){
+    public Map<String, String> startWalk(String userid, Date walkDate,String location, String address){
         User user = userRepository.findByUserid(userid);
         if(user == null){
             throw new NotFoundUserException();
@@ -57,6 +57,8 @@ public class WalkService implements WalkServiceInterface {
         walk = Walk.builder()
                 .user(user)
                 .walkDate(walkDate)
+                .location(location)
+                .address(address)
                 .build();
         walk = walkRepository.save(walk);
         user.addWalk(walk);
@@ -66,7 +68,7 @@ public class WalkService implements WalkServiceInterface {
     }
     @Override
     @Transactional
-    public void addGps(String userid, String walkId, Double latitude, Double longitude){
+    public void addGps(String userid, String walkId, String latitude, String longitude){
         User user = userRepository.findByUserid(userid);
         if(user == null){
             throw new NotFoundUserException();
@@ -118,8 +120,8 @@ public class WalkService implements WalkServiceInterface {
         }catch (IOException e){
             System.out.println("s3 등록 실패");
         }
-        //시간 string -> date로 타입 변경
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        //시간 string -> date로 타입 변경 (시: 분)
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
         Date time = format.parse(walkTime);
 
         //산책 추가 정보 등록
@@ -140,7 +142,7 @@ public class WalkService implements WalkServiceInterface {
             ResponseWalk.list responseDto = ResponseWalk.list.builder()
                     .id(walk.getId())
                     .walkDate(walk.getWalkDate())
-                    .stepCount(walk.getStep_count())
+                    .stepCount(walk.getStepCount())
                     .distance(walk.getDistance())
                     .calorie(walk.getCalorie())
                     .walkTime(walk.getWalkTime())
@@ -164,6 +166,52 @@ public class WalkService implements WalkServiceInterface {
             throw new NotFoundWalkException();
         }
         walkRepository.delete(walk);
+    }
+    @Override
+    @Transactional
+    public Map<Date, ResponseWalk.calendar> getWalkForCalendar(String userId){
+        Map<Date, ResponseWalk.calendar> map = new HashMap<>();
+
+        User user = userRepository.findByUserid(userId);
+        if(user == null){
+            throw new NotFoundUserException();
+        }
+        List<Walk> walkList = walkRepository.findByUser(user);
+        for(Walk walk : walkList){
+            ResponseWalk.calendar response = ResponseWalk.calendar.builder()
+                    .distance(walk.getDistance())
+                    .stepCount(walk.getStepCount())
+                    .walkTime(walk.getWalkTime())
+                    .build();
+            map.put(walk.getWalkDate(),response);
+        }
+        return map;
+    }
+
+    @Transactional
+    @Override
+    public ResponseWalk.total getTotalWalk(String userid, Date startDate, Date endDate) throws ParseException{
+        User user = userRepository.findByUserid(userid);
+        if(user == null){
+            throw new NotFoundUserException();
+        }
+
+        //월 총합
+        List<Walk> walkList = walkRepository.findByUserAndWalkDateBetween(startDate, endDate, user);
+        long time = 0;
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+        for(Walk walk : walkList){
+            time+= format.parse("01:10").getTime();
+            System.out.println(time);
+            //System.out.println(walk.getWalkTime()+"###"+ format.parse(walk.getWalkTime().toString()).getTime());
+        }
+        System.out.println("++++++++++++++++++"+ time/6000+"    "+time/3600000);
+        ResponseWalk.total response = ResponseWalk.total.builder()
+                .stepCount(walkRepository.findByStepCount(startDate, endDate, user))
+                .distance(walkRepository.findByDistance(startDate,endDate,user))
+                .build();
+
+        return response;
     }
     // S3 업로드
     public String upload(MultipartFile multipartFile, String dirName) throws IOException{
@@ -204,5 +252,6 @@ public class WalkService implements WalkServiceInterface {
      }
      return Optional.empty();
     }
+
 
 }

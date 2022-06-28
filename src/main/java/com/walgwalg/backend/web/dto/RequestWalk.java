@@ -20,6 +20,8 @@ public class RequestWalk {
         private Date walkDate;
         @NotEmpty(message = "공원 이름이 비어있음")
         private String location;
+        @NotEmpty(message = "상세 주소가 비어있음")
+        private String address;
     }
 
     @Builder
@@ -28,9 +30,9 @@ public class RequestWalk {
         @NotNull(message = "산책번호가 비어있음")
         private String walkId;
         @NotNull(message = "위도가 비어있음")
-        private double latitude;
+        private String latitude;
         @NotNull(message = "경도가 비어있음")
-        private double longitude;
+        private String longitude;
     }
 
     @Builder
@@ -47,4 +49,5 @@ public class RequestWalk {
         @NotNull(message = "산책시간이 비어있음")
         private String walkTime;
     }
+
 }

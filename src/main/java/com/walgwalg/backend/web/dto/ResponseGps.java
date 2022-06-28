@@ -7,7 +7,7 @@ public class ResponseGps {
     @Data
     @Builder
     public static class gps{
-        private double latitude;
-        private double longitude;
+        private String latitude;
+        private String longitude;
     }
 }

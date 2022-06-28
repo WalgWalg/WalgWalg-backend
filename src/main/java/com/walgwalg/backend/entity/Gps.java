@@ -16,17 +16,17 @@ public class Gps {
     private Long id;
 
     @Column(name = "latitude")
-    private double latitude;
+    private String latitude;
 
     @Column(name = "longitude")
-    private double longitude;
+    private String longitude;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "walk")
     private Walk walk;
 
     @Builder
-    public Gps(double latitude, double longitude, Walk walk){
+    public Gps(String latitude, String longitude, Walk walk){
         this.latitude = latitude;
         this.longitude = longitude;
         this.walk = walk;
