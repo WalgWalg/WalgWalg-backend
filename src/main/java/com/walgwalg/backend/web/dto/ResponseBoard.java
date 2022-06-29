@@ -56,4 +56,11 @@ public class ResponseBoard {
                     .build();
         }
     }
+
+    @Builder
+    @Data
+    public static class top{
+        private String parkName; //공원이름
+        private String image;
+    }
 }

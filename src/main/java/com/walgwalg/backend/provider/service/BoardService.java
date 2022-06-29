@@ -118,4 +118,20 @@ public class BoardService implements BoardServiceInterface {
         }
         boardRepository.delete(board);
     }
+    @Transactional
+    @Override
+    public List<ResponseBoard.top> getBoardTop(){
+        List<ResponseBoard.top> list = new ArrayList<>();
+        List<Board> boardList =boardRepository.findTop5ByOrderByLikesListDesc();
+        for(Board board : boardList){
+            Walk walk = board.getWalk();
+            ResponseBoard.top response = ResponseBoard.top.builder()
+                    .image(walk.getCourse())
+                    .parkName(walk.getLocation())
+                    .build();
+            list.add(response);
+
+        }
+        return list;
+    }
 }

@@ -82,4 +82,14 @@ public class BoardController {
                 .message("게시판 삭제 성공")
                 .build(), HttpStatus.OK);
     }
+    @GetMapping("/board/top")
+    public ResponseEntity<ResponseMessage> getBoardTop5(){
+        List<ResponseBoard.top> list = boardService.getBoardTop();
+
+        return new ResponseEntity<>(ResponseMessage.builder()
+                .status(HttpStatus.OK.value())
+                .message("좋아요 TOP5 게시판 조회 성공")
+                .list(list)
+                .build(), HttpStatus.OK);
+    }
 }

@@ -7,6 +7,7 @@ C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\entity\Likes.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\entity\User.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\WalgWalgApplication.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\configuration\S3Config.java
+C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\dto\RequestPark.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\dto\ResponseHashtag.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\repository\GpsRepository.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\exception\errors\NotFoundUserException.java
@@ -16,6 +17,7 @@ C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\configuration\JwtConf
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\dto\RequestWalk.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\entity\HashTag.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\provider\security\JwtAuthTokenProvider.java
+C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\provider\service\ParkService.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\UserController.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\exception\errors\NotFoundBoardException.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\ScrapController.java
@@ -27,12 +29,14 @@ C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\provider\service\User
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\repository\BoardRepository.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\exception\errors\CustomJwtRuntimeException.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\provider\service\BoardService.java
+C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\ParkController.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\core\security\AuthTokenProvider.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\entity\Scrap.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\core\service\WalkServiceInterface.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\core\service\ScrapServiceInterface.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\provider\service\WalkService.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\dto\ResponseGps.java
+C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\repository\ParkRepository.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\dto\ResponseLike.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\exception\errors\LoginFailedException.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\entity\Gps.java
@@ -41,6 +45,8 @@ C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\dto\ResponseWalk.
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\interceptor\AuthInterceptor.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\exception\ErrorCode.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\exception\errors\NotFoundLikesException.java
+C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\dto\ResponsePark.java
+C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\dto\ParkInfo.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\repository\HashTagRepository.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\exception\errors\DuplicatedWalkException.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\dto\ResponseBoard.java
@@ -50,6 +56,7 @@ C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\provider\security\Jwt
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\provider\service\LikeService.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\repository\ScrapRepository.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\configuration\WebConfig.java
+C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\entity\Park.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\BoardController.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\provider\service\ScrapService.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\entity\Walk.java
