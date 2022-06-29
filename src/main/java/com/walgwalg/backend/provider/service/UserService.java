@@ -20,7 +20,9 @@ import com.walgwalg.backend.web.dto.ResponseUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -33,6 +35,7 @@ import java.util.Optional;
 public class UserService implements UserServiceInterface {
     private final UserRepository userRepository;
     private final JwtAuthTokenProvider jwtAuthTokenProvider;
+    private final S3Service s3Service;
 
     @Transactional
     @Override
@@ -89,7 +92,7 @@ public class UserService implements UserServiceInterface {
     }
     @Override
     @Transactional
-    public void changeUserInfo(String userid, RequestUser.changeInfo changeInfoDto){
+    public void changeUserInfo(String userid, MultipartFile file, RequestUser.changeInfo changeInfoDto){
         User user = userRepository.findByUserid(userid);
         if(user == null){//유저 정보가 없을 경우
             throw new NotFoundUserException();
@@ -98,12 +101,24 @@ public class UserService implements UserServiceInterface {
         if(user1 != null && !user.equals(user1)){//닉네임 중복
             throw new RegisterFailedException();
         }
+
+        if(!Optional.ofNullable(user.getProfile()).isEmpty()){//프로필 사진이 이미 s3에 등록 됐을 경우 삭제 후 업로드
+            s3Service.deleteFile(user.getProfile());
+        }
+        //프로필 사진 s3에 등록
+        String url="";
+        try {
+            url = s3Service.upload(file, "user");
+        }catch (IOException e){
+            System.out.println("s3 등록 실패");
+        }
+
         //salt생성
         String salt = SHA256Util.generateSalt();
         //비밀번호 암호화
         String encryptedPassword = SHA256Util.getEncrypt(changeInfoDto.getPassword(),salt);
         //유저 정보 수정
-        user.changeUserInfo(encryptedPassword,changeInfoDto.getNickname(),changeInfoDto.getAddress(),salt);
+        user.changeUserInfo(encryptedPassword,changeInfoDto.getNickname(),changeInfoDto.getAddress(),salt,url);
     }
     @Transactional
     @Override

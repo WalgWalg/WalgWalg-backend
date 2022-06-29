@@ -8,11 +8,6 @@ import com.walgwalg.backend.web.dto.ParkInfo;
 import com.walgwalg.backend.web.dto.RequestPark;
 import com.walgwalg.backend.web.dto.ResponsePark;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,21 +22,6 @@ public class ParkService {
 
     @Transactional
     public void registerPark(RequestPark requestDto){
-//        try {
-//            JSONParser parser = new JSONParser();
-//            Object obj = parser.parse(request);
-//            JSONObject main = (JSONObject)request;
-//            JSONArray jsonArray = (JSONArray)request;
-//
-//            if(jsonArray.size() > 0){
-//                for(int i=0; i< jsonArray.size(); i++){
-//                    JSONObject jsonObject = (JSONObject)jsonArray.get(i);
-//                    System.out.println(jsonObject.get("공원명").toString());
-//                }
-//            }
-//        }catch (ParseException e){
-//            System.out.println("공원 공공데이터 저장 실패");
-//        }
         for(ParkInfo requestPark : requestDto.getPark()){
             Park park = Park.builder()
                     .parkName(requestPark.getParkName())

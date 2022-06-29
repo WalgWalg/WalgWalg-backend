@@ -35,8 +35,8 @@ public class User {
     @Column(name="refreshToken")
     private String refreshToken;
 
-//    @Column(name = "profile")
-//    private String profile; //프로필 사진 경로
+    @Column(name = "profile")
+    private String profile; //프로필 사진 경로
     
     @OneToMany(mappedBy = "user")
     private List<Board> boardList = new ArrayList<>(); //게시판 리스트
@@ -73,10 +73,11 @@ public class User {
     public void changeRefreshToken(String refreshToken){
         this.refreshToken = refreshToken;
     };
-    public void changeUserInfo(String password, String nickname, String address, String salt){
+    public void changeUserInfo(String password, String nickname, String address, String salt, String profile){
         this.password = password;
         this.nickname = nickname;
         this.address = address;
         this.salt = salt;
+        this.profile = profile;
     }
 }

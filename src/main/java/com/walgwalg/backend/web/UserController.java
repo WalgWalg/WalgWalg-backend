@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -48,15 +49,16 @@ public class UserController {
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @PostMapping("/user/changeUserInfo")
-    public ResponseEntity<ResponseMessage> changeUserInfo(HttpServletRequest request, @RequestBody RequestUser.changeInfo changeInfoDto){
+    @PostMapping("/user/info")
+    public ResponseEntity<ResponseMessage> changeUserInfo(HttpServletRequest request, @RequestPart(value = "file", required = false)MultipartFile file,
+                                                          @RequestPart(value = "requestDto") RequestUser.changeInfo changeInfoDto){
         Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
         String userid = null;
         if(token.isPresent()){
             JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token.get());
             userid = jwtAuthToken.getClaims().getSubject();
         }
-        userService.changeUserInfo(userid, changeInfoDto);
+        userService.changeUserInfo(userid,file, changeInfoDto);
         ResponseMessage response = ResponseMessage.builder()
                 .status(HttpStatus.OK.value())
                 .message("회원정보 수정 성공")
@@ -75,6 +77,7 @@ public class UserController {
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
     @GetMapping("/dev")
     public String dev(){
         System.out.println("dev 실행");

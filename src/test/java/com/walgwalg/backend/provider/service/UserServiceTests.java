@@ -15,6 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -151,7 +152,7 @@ public class UserServiceTests {
                 .nickname("hello")
                 .build();
         System.out.println("회원정보 수정 테스트(실패- 회원 정보가 없음)");
-        assertThrows(NotFoundUserException.class,()->userService.changeUserInfo("test",changeInfoDto));
+        assertThrows(NotFoundUserException.class,()->userService.changeUserInfo("test",null,changeInfoDto));
     }
     @Test
     @Transactional
@@ -174,7 +175,7 @@ public class UserServiceTests {
                 .nickname("nick")
                 .build();
         System.out.println("회원정보 수정 테스트(실패- 닉네임 중복)");
-        assertThrows(RegisterFailedException.class,()->userService.changeUserInfo("userid1",changeInfoDto));
+        assertThrows(RegisterFailedException.class,()->userService.changeUserInfo("userid1",null,changeInfoDto));
     }
     @Test
     @Transactional
@@ -193,9 +194,13 @@ public class UserServiceTests {
                 .nickname("changednick")
                 .address("changedaddress")
                 .build();
-        userService.changeUserInfo("userid",changeInfoDto);
-        System.out.println("회원정보 수정 테스트(성공)");
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "test2.png",
+                "image/png", "test data".getBytes());
+        userService.changeUserInfo("userid",mockMultipartFile,changeInfoDto);
         User user1 = userRepository.findByUserid("userid");
-        System.out.println(user1.getPassword()+" "+user1.getNickname()+" "+user1.getAddress());
+        System.out.println(user1.getProfile());
+        userService.changeUserInfo("userid",mockMultipartFile,changeInfoDto);
+        User user2 = userRepository.findByUserid("userid");
+        System.out.println(user2.getProfile());
     }
 }
