@@ -38,6 +38,16 @@ public class BoardController {
                 .message("게시판 등록 성공")
                 .build(), HttpStatus.OK);
     }
+    @GetMapping("/board")
+    public ResponseEntity<ResponseMessage> getAllBoard(){
+        List<ResponseBoard.getBoard> response = boardService.getAllBoard();
+        return new ResponseEntity<>(ResponseMessage.builder()
+                .status(HttpStatus.OK.value())
+                .message("게시판 전체 조회 성공")
+                .list(response)
+                .build(), HttpStatus.OK);
+
+    }
     @GetMapping("/board/{boardId}")
     public ResponseEntity<ResponseMessage> getBoard(@PathVariable String boardId){
         ResponseBoard.getBoard response = boardService.getBoard(boardId);

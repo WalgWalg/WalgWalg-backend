@@ -2,6 +2,7 @@ package com.walgwalg.backend.web.dto;
 
 import com.walgwalg.backend.entity.Board;
 import com.walgwalg.backend.entity.HashTag;
+import com.walgwalg.backend.entity.Walk;
 import lombok.Builder;
 import lombok.Data;
 
@@ -27,6 +28,27 @@ public class ResponseBoard {
         //좋아요
         private Integer likes;
 
+        public static getBoard of(Board board){
+            Walk walk = board.getWalk();
+            List<String> hashTagList = new ArrayList<>();
+            if(!board.getHashTags().isEmpty()){//해시태그가 있으면
+                for(HashTag tag : board.getHashTags()){
+                    hashTagList.add(tag.getTag());
+                }
+            }
+            return ResponseBoard.getBoard.builder()
+                    .title(board.getTitle())
+                    .contents(board.getContents())
+                    .hashTags(hashTagList)
+                    .step_count(walk.getStepCount())
+                    .distance(walk.getDistance())
+                    .calorie(walk.getCalorie())
+                    .course(walk.getCourse())
+                    .location(walk.getLocation())
+                    .nickname(board.getUser().getNickname())
+                    .likes(board.getLikesList().size())
+                    .build();
+        }
     }
 
     @Data
@@ -36,15 +58,13 @@ public class ResponseBoard {
         private String title;
         private String image;
         private Date date;
-        private List<ResponseHashtag.Hashtag> hashTags;
+        private List<String> hashTags;
 
         public static list of(Board board){
-            List<ResponseHashtag.Hashtag> hashtagListDto = new ArrayList<>();
-            List<HashTag> hashTags = board.getHashTags();
-            if(hashTags != null){
-                for(HashTag hashTag : board.getHashTags()){
-                    ResponseHashtag.Hashtag hashtagDto = ResponseHashtag.Hashtag.of(hashTag);
-                    hashtagListDto.add(hashtagDto);
+            List<String> hashTagList = new ArrayList<>();
+            if(!board.getHashTags().isEmpty()){//해시태그가 있으면
+                for(HashTag tag : board.getHashTags()){
+                    hashTagList.add(tag.getTag());
                 }
             }
             return list.builder()
@@ -52,7 +72,7 @@ public class ResponseBoard {
                     .title(board.getTitle())
                     .image(board.getWalk().getCourse())
                     .date(board.getTimestamp())
-                    .hashTags(hashtagListDto)
+                    .hashTags(hashTagList)
                     .build();
         }
     }

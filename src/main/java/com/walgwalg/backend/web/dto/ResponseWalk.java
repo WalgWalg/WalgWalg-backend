@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.Map;
 
 public class ResponseWalk {
     @Builder
@@ -14,9 +15,9 @@ public class ResponseWalk {
         private String id;
         private Date walkDate;
         private Integer stepCount;
-        private float distance;
+        private Integer distance;
         private Integer calorie;
-        private Date walkTime;
+        private String walkTime;
         private String course;
         private String location;
     }
@@ -24,19 +25,23 @@ public class ResponseWalk {
     @Data
     public static class calendar{
         private Integer stepCount; //걸음수
-        private float distance;
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
-        private Date walkTime;
+        private Integer distance;
+        private String walkTime;
 
     }
 
     @Builder
     @Data
-    @AllArgsConstructor
     public static class total{
         public Integer stepCount; //걸음수
-        private float distance;
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
-        private Date walkTime;
+        private Integer distance;
+        private String walkTime;
+    }
+
+    @Builder
+    @Data
+    public static class mainInfo{
+        public String nickName;
+        public Map<String, ResponseWalk.total> walkTotal;
     }
 }

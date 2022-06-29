@@ -12,4 +12,5 @@ public interface BoardServiceInterface {
     List<ResponseBoard.list> getMyBoard(String userId);
     void deleteBoard(String userId, String boardId);
     List<ResponseBoard.top> getBoardTop();
+    List<ResponseBoard.getBoard> getAllBoard();
 }

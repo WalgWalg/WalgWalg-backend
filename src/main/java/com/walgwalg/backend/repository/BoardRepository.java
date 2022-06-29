@@ -1,8 +1,8 @@
 package com.walgwalg.backend.repository;
 
 import com.walgwalg.backend.entity.Board;
-import com.walgwalg.backend.entity.Likes;
 import com.walgwalg.backend.entity.User;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -18,5 +18,5 @@ public interface BoardRepository extends JpaRepository<Board, String> {
     Board findByIdAndUser(String id ,User user);
 
     @Query("select b from Board b join b.likesList l group by b.id order by l.size desc")
-    List<Board> findTop5ByOrderByLikesListDesc();
+    List<Board> findTop5ByOrderByLikesListDesc(Pageable pageable);
 }

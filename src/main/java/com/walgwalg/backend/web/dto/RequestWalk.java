@@ -43,7 +43,7 @@ public class RequestWalk {
         @NotNull(message = "걸음수가 비어있음")
         private Integer step_count;
         @NotNull(message = "거리가 비어있음")
-        private float distance;
+        private Integer distance;
         @NotNull(message = "칼로리가 비어있음")
         private Integer calorie;
         @NotNull(message = "산책시간이 비어있음")

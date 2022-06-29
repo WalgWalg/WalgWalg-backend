@@ -18,6 +18,7 @@ import com.walgwalg.backend.web.dto.RequestWalk;
 import com.walgwalg.backend.web.dto.ResponseGps;
 import com.walgwalg.backend.web.dto.ResponseWalk;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 @Service
@@ -50,11 +55,11 @@ public class WalkService implements WalkServiceInterface {
         if(user == null){
             throw new NotFoundUserException();
         }
-        Walk walk = walkRepository.findByUserAndWalkDate(user, walkDate);
-        if(walk != null){
-            throw new DuplicatedWalkException();
-        }
-        walk = Walk.builder()
+//        Walk walk = walkRepository.findByUserAndWalkDate(user, walkDate);
+//        if(walk != null){
+//            throw new DuplicatedWalkException();
+//        }
+         Walk walk = Walk.builder()
                 .user(user)
                 .walkDate(walkDate)
                 .location(location)
@@ -104,7 +109,7 @@ public class WalkService implements WalkServiceInterface {
     @Override
     @Transactional
     public void registerWalk(String userid,MultipartFile course,String walkId, Integer stepCount,
-                             float distance, Integer calorie, String walkTime) throws ParseException {
+                             Integer distance, Integer calorie, String walkTime) throws ParseException {
         User user = userRepository.findByUserid(userid);
         if(user == null){
             throw new NotFoundUserException();
@@ -120,13 +125,9 @@ public class WalkService implements WalkServiceInterface {
         }catch (IOException e){
             System.out.println("s3 등록 실패");
         }
-        //시간 string -> date로 타입 변경 (시: 분)
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-        Date time = format.parse(walkTime);
 
         //산책 추가 정보 등록
-        walk.updateWalk(stepCount, distance,
-                calorie,time, url);
+        walk.updateWalk(stepCount, distance, calorie,walkTime, url);
         user.addWalk(walk);
     }
     @Override
@@ -190,28 +191,61 @@ public class WalkService implements WalkServiceInterface {
 
     @Transactional
     @Override
-    public ResponseWalk.total getTotalWalk(String userid, Date startDate, Date endDate) throws ParseException{
+    public ResponseWalk.mainInfo getTotalWalk(String userid) throws ParseException{
+        Map<String, ResponseWalk.total> map = new HashMap<>();
         User user = userRepository.findByUserid(userid);
         if(user == null){
             throw new NotFoundUserException();
         }
 
-        //월 총합
-        List<Walk> walkList = walkRepository.findByUserAndWalkDateBetween(startDate, endDate, user);
-        long time = 0;
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-        for(Walk walk : walkList){
-            time+= format.parse("01:10").getTime();
-            System.out.println(time);
-            //System.out.println(walk.getWalkTime()+"###"+ format.parse(walk.getWalkTime().toString()).getTime());
-        }
-        System.out.println("++++++++++++++++++"+ time/6000+"    "+time/3600000);
-        ResponseWalk.total response = ResponseWalk.total.builder()
-                .stepCount(walkRepository.findByStepCount(startDate, endDate, user))
-                .distance(walkRepository.findByDistance(startDate,endDate,user))
-                .build();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        //일 총합
+        LocalDate now = LocalDate.now();
+        LocalDate next = LocalDate.now().plusDays(1);
+        Date today = format.parse(now.toString());
+        Date nextDate = format.parse(next.toString());
+        List<Walk> todayWalkList = walkRepository.findByUserAndWalkDateBetween(today, nextDate, user);
 
-        return response;
+        ResponseWalk.total daily = ResponseWalk.total.builder()
+                .stepCount(walkRepository.findByStepCount(today, today, user))
+                .distance(walkRepository.findByDistance(today,today,user))
+                .walkTime(getWalkTime(todayWalkList))
+                .build();
+        map.put("today", daily);
+        //월 총합
+
+        LocalDate start = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
+        LocalDate end = LocalDate.now().with(TemporalAdjusters.firstDayOfNextMonth());
+        Date startDate = format.parse(start.toString());
+        Date endDate = format.parse(end.toString());
+        List<Walk> monthWalkList = walkRepository.findByUserAndWalkDateBetween(startDate, endDate, user);
+        if(!monthWalkList.isEmpty()){
+            ResponseWalk.total month = ResponseWalk.total.builder()
+                    .stepCount(walkRepository.findByStepCount(startDate, endDate, user))
+                    .distance(walkRepository.findByDistance(startDate,endDate,user))
+                    .walkTime(getWalkTime(monthWalkList))
+                    .build();
+            map.put("month", month);
+        }
+
+        return ResponseWalk.mainInfo.builder()
+                .nickName(user.getNickname())
+                .walkTotal(map)
+                .build();
+    }
+    private String getWalkTime(List<Walk> walkList){
+        Integer hour =0;
+        Integer minute =0;
+        for(Walk walk :walkList){
+            String[] time = walk.getWalkTime().split(":");
+            hour+= Integer.parseInt(time[0]);
+            minute+= Integer.parseInt(time[1]);
+        }
+        if(minute != 0){
+            hour += minute/60;
+            minute = minute%60;
+        }
+        return hour.toString()+"시간 "+minute.toString()+"분";
     }
     // S3 업로드
     public String upload(MultipartFile multipartFile, String dirName) throws IOException{

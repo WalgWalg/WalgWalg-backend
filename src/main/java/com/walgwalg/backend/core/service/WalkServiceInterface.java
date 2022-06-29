@@ -14,9 +14,9 @@ public interface WalkServiceInterface {
     Map<String, String> startWalk(String userid, Date walkDate,String location, String address);
     void addGps(String userid, String walkId, String latitude, String longitude);
     List<ResponseGps.gps> getGps(String walkId);
-    void registerWalk(String userid,MultipartFile course,String walkId, Integer step_count,float distance, Integer calorie, String walkTime) throws ParseException;
+    void registerWalk(String userid,MultipartFile course,String walkId, Integer step_count,Integer distance, Integer calorie, String walkTime) throws ParseException;
     void deleteWalk(String userId, String walkId);
     List<ResponseWalk.list> getAllMyWalk(String userid);
     Map<Date, ResponseWalk.calendar> getWalkForCalendar(String userid);
-    ResponseWalk.total getTotalWalk(String userid, Date startDate, Date endDate)throws ParseException;
+    ResponseWalk.mainInfo getTotalWalk(String userid)throws ParseException;
 }

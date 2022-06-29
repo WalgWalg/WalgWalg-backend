@@ -12,6 +12,7 @@ import com.walgwalg.backend.web.dto.RequestBoard;
 import com.walgwalg.backend.web.dto.ResponseBoard;
 import com.walgwalg.backend.web.dto.ResponseUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,10 +23,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class BoardService implements BoardServiceInterface {
-    private final LikesRepository likesRepository;
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
-    private final ScrapRepository scrapRepository;
     private final WalkRepository walkRepository;
     private final HashTagRepository hashTagRepository;
 
@@ -65,27 +64,21 @@ public class BoardService implements BoardServiceInterface {
     @Override
     public ResponseBoard.getBoard getBoard(String boardId){
         Board board = boardRepository.findById(boardId).orElseThrow(()->new NotFoundBoardException());
-        Walk walk = board.getWalk();
-        List<String> hashTagList = new ArrayList<>();
-        if(!board.getHashTags().isEmpty()){//해시태그가 있으면
-            for(HashTag tag : board.getHashTags()){
-                hashTagList.add(tag.getTag());
-            }
-        }
-        ResponseBoard.getBoard response = ResponseBoard.getBoard.builder()
-                .title(board.getTitle())
-                .contents(board.getContents())
-                .hashTags(hashTagList)
-                .step_count(walk.getStepCount())
-                .distance(walk.getDistance())
-                .calorie(walk.getCalorie())
-                .course(walk.getCourse())
-                .location(walk.getLocation())
-                .nickname(board.getUser().getNickname())
-                .likes(board.getLikesList().size())
-                .build();
+
+        ResponseBoard.getBoard response = ResponseBoard.getBoard.of(board);
         return response;
     }
+    @Transactional
+    @Override
+    public List<ResponseBoard.getBoard> getAllBoard(){
+        List<Board> boardList = boardRepository.findAll();
+        List<ResponseBoard.getBoard> response = new ArrayList<>();
+        for(Board board : boardList){
+            response.add(ResponseBoard.getBoard.of(board));
+        }
+        return response;
+    }
+
     @Transactional
     @Override
     public List<ResponseBoard.list> getMyBoard(String userId){
@@ -122,7 +115,8 @@ public class BoardService implements BoardServiceInterface {
     @Override
     public List<ResponseBoard.top> getBoardTop(){
         List<ResponseBoard.top> list = new ArrayList<>();
-        List<Board> boardList =boardRepository.findTop5ByOrderByLikesListDesc();
+        //상위 5개만
+        List<Board> boardList =boardRepository.findTop5ByOrderByLikesListDesc(PageRequest.of(0,5));
         for(Board board : boardList){
             Walk walk = board.getWalk();
             ResponseBoard.top response = ResponseBoard.top.builder()

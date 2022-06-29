@@ -251,4 +251,54 @@ public class BoardServiceTests {
             System.out.println(response.getParkName());
         }
     }
+    @Test
+    @Transactional
+    @DisplayName("전체 게시판 조회 테스트")
+    void getAllBoard(){
+        User user = User.builder()
+                .userid("userid")
+                .password("password")
+                .build();
+        user = userRepository.save(user);
+        User user1 = User.builder()
+                .userid("userid1")
+                .password("password")
+                .build();
+        user1 = userRepository.save(user1);
+        //게시판 등록1
+        Walk walk = Walk.builder()
+                .user(user)
+                .location("광교호수공원")
+                .build();
+        walk = walkRepository.save(walk);
+        RequestBoard.register requestDto = RequestBoard.register.builder()
+                .walkId(walk.getId())
+                .title("게시판 제목")
+                .contents("내용입니다.")
+                .build();
+        boardService.registerBoard("userid", requestDto);
+        Board board = boardRepository.findByUserAndTitle(user, "게시판 제목");
+        //좋아요
+        likeService.addLike("userid", board.getId());
+        //게시판 등록2
+        Walk walk2 = Walk.builder()
+                .user(user1)
+                .location("공원2")
+                .build();
+        walk2 = walkRepository.save(walk2);
+        RequestBoard.register requestDto2 = RequestBoard.register.builder()
+                .walkId(walk2.getId())
+                .title("게시판 제목2")
+                .contents("게시판 내용입니다.2")
+                .build();
+        boardService.registerBoard("userid1", requestDto2);
+        Board board2 = boardRepository.findByUserAndTitle(user1, "게시판 제목2");
+        //좋아요
+        likeService.addLike("userid", board2.getId());
+        likeService.addLike("userid1", board2.getId());
+        List<ResponseBoard.getBoard> list =  boardService.getAllBoard();
+        for(ResponseBoard.getBoard response : list){
+            System.out.println(response.getLocation());
+        }
+    }
 }

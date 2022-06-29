@@ -141,16 +141,16 @@ public class WalkController {
     }
 
     @GetMapping("/walk/total")
-    public ResponseEntity<ResponseMessage> getTotalWalk(HttpServletRequest request,@RequestParam Date startDate, @RequestParam Date endDate){
+    public ResponseEntity<ResponseMessage> getTotalWalk(HttpServletRequest request){
         Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
         String userId = null;
         if(token.isPresent()){
             JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token.get());
             userId = jwtAuthToken.getClaims().getSubject();
         }
-        ResponseWalk.total response = null;
+        ResponseWalk.mainInfo response = null;
         try {
-            response = walkService.getTotalWalk(userId, startDate, endDate);
+            response = walkService.getTotalWalk(userId);
         }catch (ParseException e){
             System.out.println("산책 통계 조회 실패");
         }
@@ -158,7 +158,7 @@ public class WalkController {
 
         return new ResponseEntity<>(ResponseMessage.builder()
                 .status(HttpStatus.OK.value())
-                .message("월별 산책 통계 조회 성공")
+                .message("산책 통계 조회 성공")
                 .build(), HttpStatus.OK);
 
     }

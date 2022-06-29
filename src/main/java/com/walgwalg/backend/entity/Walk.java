@@ -26,14 +26,13 @@ public class Walk {
     private Integer stepCount; //걸음수
 
     @Column(name="distance")
-    private float distance; //거리
+    private Integer distance; //거리
 
     @Column(name="calorie")
     private Integer calorie; //칼로리
 
     @Column(name="walk_time")
-    @Temporal(TemporalType.TIME)
-    private Date walkTime; //소요시간
+    private String walkTime; //소요시간
 
     @Column(name = "course")
     private String course; //산책 코스 사진 경로
@@ -55,7 +54,7 @@ public class Walk {
     private List<Gps> gpsList = new ArrayList<>(); // gps
 
     @Builder
-    public Walk(User user, Date walkDate, Integer stepCount, float distance, Integer calorie, Date walkTime,
+    public Walk(User user, Date walkDate, Integer stepCount, Integer distance, Integer calorie, String walkTime,
                 String course, String location, String address){
         this.user = user;
         this.walkDate = walkDate;
@@ -67,7 +66,7 @@ public class Walk {
         this.location = location;
         this.address = address;
     }
-    public void updateWalk(Integer stepCount, float distance, Integer calorie, Date walkTime,
+    public void updateWalk(Integer stepCount, Integer distance, Integer calorie, String walkTime,
                            String course){
         this.stepCount = stepCount;
         this.distance = distance;

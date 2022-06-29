@@ -209,7 +209,7 @@ public class WalkServiceTests {
                 .stepCount(1000)
                 .distance(1234)
                 .calorie(400)
-                .walkTime(new Date())
+                .walkTime("01:10")
                 .location("광교호수공원")
                 .build();
         walk = walkRepository.save(walk);
@@ -219,7 +219,7 @@ public class WalkServiceTests {
                 .stepCount(300)
                 .distance(124)
                 .calorie(1230)
-                .walkTime(new Date())
+                .walkTime("01:10")
                 .location("한강공원")
                 .build();
         walk1 = walkRepository.save(walk1);
@@ -229,22 +229,21 @@ public class WalkServiceTests {
 
     @Test
     @Transactional
-    @DisplayName("월별 산책 통계 조회 테스트")
+    @DisplayName("산책 통계 조회 테스트")
     void getWalkTotalTest() throws ParseException{
         User user = User.builder()
                 .userid("userid")
+                .nickname("닉네임")
                 .password("password")
                 .build();
         user = userRepository.save(user);
-        SimpleDateFormat f = new SimpleDateFormat("HH:mm");
-        Date time = f.parse("01:10");
         Walk walk = Walk.builder()
                 .user(user)
                 .walkDate(Date.from(LocalDateTime.now().minusMonths(2).atZone(ZoneId.systemDefault()).toInstant()))
                 .stepCount(1000)
                 .distance(1234)
                 .calorie(400)
-                .walkTime(time)
+                .walkTime("01:55")
                 .location("광교호수공원")
                 .build();
         walk = walkRepository.save(walk);
@@ -254,29 +253,27 @@ public class WalkServiceTests {
                 .stepCount(300)
                 .distance(124)
                 .calorie(1230)
-                .walkTime(time)
+                .walkTime("01:10")
                 .location("한강공원")
                 .build();
         walk1 = walkRepository.save(walk1);
 
         Walk walk2 = Walk.builder()
                 .user(user)
-                .walkDate(new Date())
+                .walkDate(Date.from(LocalDateTime.now().minusDays(1).atZone(ZoneId.systemDefault()).toInstant()))
                 .stepCount(3009)
                 .distance(124)
                 .calorie(1230)
-                .walkTime(time)
+                .walkTime("01:55")
                 .location("한강공원")
                 .build();
         walk2 = walkRepository.save(walk2);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date start = format.parse("2022-06-01");
-        Date end = format.parse("2022-06-30");
+        Date end = format.parse("2022-07-01");
 
-        ResponseWalk.total test = walkService.getTotalWalk("userid", start, end);
-        Integer response = walkRepository.findByStepCount(start,end,user);
-        Float distance = walkRepository.findByDistance(start,end,user);
-        System.out.println(response +" "+distance);
+        ResponseWalk.mainInfo response = walkService.getTotalWalk("userid");
+        System.out.println(response);
     }
 
 }
