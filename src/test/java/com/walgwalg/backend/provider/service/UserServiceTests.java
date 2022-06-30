@@ -203,4 +203,19 @@ public class UserServiceTests {
         User user2 = userRepository.findByUserid("userid");
         System.out.println(user2.getProfile());
     }
+
+    @Test
+    @Transactional
+    @DisplayName("회원정보 조회 테스트(성공)")
+    void getUserInfo(){
+        User user = User.builder()
+                .userid("userid")
+                .password("password")
+                .nickname("nick")
+                .address("address")
+                .build();
+        userRepository.save(user);
+        assertNotNull(userService.getUserInfo("userid"));
+    }
+
 }

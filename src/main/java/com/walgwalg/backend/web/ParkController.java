@@ -7,10 +7,7 @@ import com.walgwalg.backend.web.dto.ResponsePark;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,6 +31,14 @@ public class ParkController {
                 .status(HttpStatus.OK.value())
                 .message("공원 공공데이터 전체 조회 성공")
                 .list(list)
+                .build(), HttpStatus.OK);
+    }
+    @DeleteMapping("/park")
+    public ResponseEntity<ResponseMessage> deleteAllPark(){
+        parkService.deleteAllPark();
+        return new ResponseEntity<>(ResponseMessage.builder()
+                .status(HttpStatus.OK.value())
+                .message("공원 공공데이터 전체 삭제 성공")
                 .build(), HttpStatus.OK);
     }
 }

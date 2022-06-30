@@ -66,6 +66,21 @@ public class UserController {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
+    @GetMapping("/user/info")
+    public ResponseEntity<ResponseMessage> getUserInfo(HttpServletRequest request){
+        Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
+        String userid = null;
+        if(token.isPresent()){
+            JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token.get());
+            userid = jwtAuthToken.getClaims().getSubject();
+        }
+        ResponseUser.Info response =  userService.getUserInfo(userid);
+        return new ResponseEntity<>(ResponseMessage.builder()
+                .status(HttpStatus.OK.value())
+                .message("회원정보 조회")
+                .list(response)
+                .build(), HttpStatus.OK); }
+
     @PostMapping("/user/update/accessToken")
     public ResponseEntity<ResponseMessage> refreshToken(@RequestBody Map<String, String> refreshToken){
         ResponseUser.Token token = userService.updateAccessToken(refreshToken.get("refreshToken")).orElseThrow(()->new CustomJwtRuntimeException());

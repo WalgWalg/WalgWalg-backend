@@ -21,4 +21,12 @@ public class ResponseUser {
         private String accessToken;
         private String refreshToken;
     }
+
+    @Builder
+    @Data
+    public static class Info{
+        private String nickname;
+        private String profile;
+        private String address;
+    }
 }

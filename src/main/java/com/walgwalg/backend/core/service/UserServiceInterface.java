@@ -17,4 +17,5 @@ public interface UserServiceInterface {
     Optional<ResponseUser.Token> updateAccessToken(String token);
     String createAccessToken(String userid);
     String createRefreshToken(String userid);
+    ResponseUser.Info getUserInfo(String userid);
 }

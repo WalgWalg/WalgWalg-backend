@@ -120,6 +120,22 @@ public class UserService implements UserServiceInterface {
         //유저 정보 수정
         user.changeUserInfo(encryptedPassword,changeInfoDto.getNickname(),changeInfoDto.getAddress(),salt,url);
     }
+
+    @Transactional
+    @Override
+    public ResponseUser.Info getUserInfo(String userid){
+        User user = userRepository.findByUserid(userid);
+        if(user == null){//유저 정보가 없을 경우
+            throw new NotFoundUserException();
+        }
+        ResponseUser.Info response = ResponseUser.Info.builder()
+                .nickname(user.getNickname())
+                .profile(user.getProfile())
+                .address(user.getAddress())
+                .build();
+        return response;
+    }
+
     @Transactional
     @Override
     public Optional<ResponseUser.Token> updateAccessToken(String token){
