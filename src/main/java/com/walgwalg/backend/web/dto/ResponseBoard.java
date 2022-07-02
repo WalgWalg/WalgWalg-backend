@@ -14,12 +14,13 @@ public class ResponseBoard {
     @Builder
     @Data
     public static class getBoard{
+        private String boardId;
         private String title;
         private String contents;
         private List<String> hashTags;
         //산책 정보
         private Integer step_count;
-        private float distance;
+        private Integer distance;
         private Integer calorie;
         private String course;
         private String location;
@@ -36,7 +37,8 @@ public class ResponseBoard {
                     hashTagList.add(tag.getTag());
                 }
             }
-            return ResponseBoard.getBoard.builder()
+            return getBoard.builder()
+                    .boardId(board.getId())
                     .title(board.getTitle())
                     .contents(board.getContents())
                     .hashTags(hashTagList)

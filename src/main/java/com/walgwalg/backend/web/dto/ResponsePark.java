@@ -14,4 +14,13 @@ public class ResponsePark {
         private String latitude; //위도
         private String longitude; //경도
     }
+    @Data
+    @Builder
+    public static class getPark{
+        private String parkName;
+        private String roadAddress;
+        private String numberAddress;
+        private String latitude; //위도
+        private String longitude; //경도
+    }
 }

@@ -16,12 +16,21 @@ import java.util.List;
 public class ParkController {
     private final ParkService parkService;
 
-    @PostMapping("/park")
+    @PostMapping("/park/all")
     public ResponseEntity<ResponseMessage> registerPark(@RequestBody RequestPark request){
         parkService.registerPark(request);
         return new ResponseEntity<>(ResponseMessage.builder()
                 .status(HttpStatus.OK.value())
                 .message("공원 공공데이터 등록 성공")
+                .build(), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/park/all")
+    public ResponseEntity<ResponseMessage> deleteAllPark(){
+        parkService.deleteAllPark();
+        return new ResponseEntity<>(ResponseMessage.builder()
+                .status(HttpStatus.OK.value())
+                .message("공원 공공데이터 전체 삭제 성공")
                 .build(), HttpStatus.OK);
     }
     @GetMapping("/park")
@@ -33,12 +42,14 @@ public class ParkController {
                 .list(list)
                 .build(), HttpStatus.OK);
     }
-    @DeleteMapping("/park")
-    public ResponseEntity<ResponseMessage> deleteAllPark(){
-        parkService.deleteAllPark();
+
+    @GetMapping("/park/{region}")
+    public ResponseEntity<ResponseMessage> getParkInRegion(@PathVariable String region){
+        List<ResponsePark.getPark> list = parkService.getParkInRegion(region);
         return new ResponseEntity<>(ResponseMessage.builder()
                 .status(HttpStatus.OK.value())
-                .message("공원 공공데이터 전체 삭제 성공")
+                .message("지역별 공원 공공데이터 조회 성공")
+                .list(list)
                 .build(), HttpStatus.OK);
     }
 }

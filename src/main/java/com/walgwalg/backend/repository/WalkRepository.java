@@ -1,5 +1,6 @@
 package com.walgwalg.backend.repository;
 
+import com.walgwalg.backend.entity.Board;
 import com.walgwalg.backend.entity.User;
 import com.walgwalg.backend.entity.Walk;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,10 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface WalkRepository extends JpaRepository<Walk, String> {
-    @Query(value = "select w from Walk w inner join w.user where w.user = :user and w.walkDate = CURRENT_DATE")
-    List<Walk> findWalkWhenToday(User user);
-
-    List<Walk> findByWalkDateContaining(String date);
+    Walk findByBoard(Board board);
 
     Walk findByUserAndId(User user, String id);
 
@@ -26,4 +24,6 @@ public interface WalkRepository extends JpaRepository<Walk, String> {
 
     @Query(value = "select sum(w.distance) from Walk w inner join w.user where w.user = :user and w.walkDate between :startDate and :endDate group by w.user")
     Integer findByDistance(Date startDate, Date endDate, User user);
+
+    List<Walk> findByAddressStartsWith(String numberAddress);
 }

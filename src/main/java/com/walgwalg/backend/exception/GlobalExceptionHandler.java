@@ -129,4 +129,15 @@ public class GlobalExceptionHandler {
                 .build();
         return new ResponseEntity<>(response, code.getHttpStatus());
     }
+    @ExceptionHandler(DuplicatedParkException.class)
+    protected ResponseEntity<ResponseMessage> handleDuplicatedParkException(DuplicatedParkException e) {
+        ErrorCode code = ErrorCode.PARK_DUPLICATED;
+
+        ResponseMessage response = ResponseMessage.builder()
+                .status(code.getHttpStatus().value())
+                .message(code.getMessage())
+                .list(code.getCode())
+                .build();
+        return new ResponseEntity<>(response, code.getHttpStatus());
+    }
 }

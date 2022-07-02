@@ -13,4 +13,6 @@ public interface BoardServiceInterface {
     void deleteBoard(String userId, String boardId);
     List<ResponseBoard.top> getBoardTop();
     List<ResponseBoard.getBoard> getAllBoard();
+    List<ResponseBoard.getBoard> getBoardInRegion(String region);
+    void updateBoard(String userid, RequestBoard.update requestDto);
 }

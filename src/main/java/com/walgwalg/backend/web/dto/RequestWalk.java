@@ -16,11 +16,11 @@ public class RequestWalk {
     @Builder
     @Data
     public static class start{
-        @NotEmpty(message = "날짜가 비어있음")
+        @NotNull(message = "날짜가 비어있음")
         private Date walkDate;
-        @NotEmpty(message = "공원 이름이 비어있음")
+        @NotNull(message = "공원 이름이 비어있음")
         private String location;
-        @NotEmpty(message = "상세 주소가 비어있음")
+        @NotNull(message = "상세 주소가 비어있음")
         private String address;
     }
 

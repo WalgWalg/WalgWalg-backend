@@ -18,8 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -36,6 +35,8 @@ public class BoardServiceTests {
     private ScrapRepository scrapRepository;
     @Autowired
     private WalkRepository walkRepository;
+    @Autowired
+    private HashTagRepository hashTagRepository;
     @Autowired
     private  UserService userService;
     @Autowired
@@ -66,6 +67,43 @@ public class BoardServiceTests {
                 .build();
         boardService.registerBoard("userid", requestDto);
 
+        assertNotNull(boardRepository.findByUser(user));
+    }
+    @Test
+    @Transactional
+    @DisplayName("게시판 수정 테스트")
+    void updateBoardTest(){
+        User user = User.builder()
+                .userid("userid")
+                .password("password")
+                .build();
+        userRepository.save(user);
+        Walk walk = Walk.builder()
+                .user(user)
+                .location("광교호수공원")
+                .build();
+        walk = walkRepository.save(walk);
+        List<String> hashTags = new ArrayList<>();
+        hashTags.add("해시태그1");
+        hashTags.add("해시태그2");
+        RequestBoard.register requestDto = RequestBoard.register.builder()
+                .walkId(walk.getId())
+                .title("게시판 제목")
+                .contents("내용입니다.")
+                .hashTags(hashTags)
+                .build();
+        boardService.registerBoard("userid", requestDto);
+        Board board = boardRepository.findByUserAndTitle(user, "게시판 제목");
+        //게시판 수정
+        RequestBoard.update update = RequestBoard.update.builder()
+                .boardId(board.getId())
+                .title("수정된 제목")
+                .contents("내용")
+                .build();
+        boardService.updateBoard("userid", update);
+        Board board1 = boardRepository.findById(board.getId()).orElseThrow(()->new NotFoundBoardException());
+        List<HashTag> hashTagList = hashTagRepository.findByBoard(board);
+        assertEquals(0, hashTagList.size());
         assertNotNull(boardRepository.findByUser(user));
     }
     @Test
@@ -142,7 +180,7 @@ public class BoardServiceTests {
     @Test
     @Transactional
     @DisplayName("게시판 삭제 테스트")
-    void deleteBoard(){
+    void deleteBoardTest(){
         User user = User.builder()
                 .userid("userid")
                 .password("password")
@@ -168,7 +206,7 @@ public class BoardServiceTests {
     @Test
     @Transactional
     @DisplayName("게시판 삭제 테스트(좋아요가 있을 때)")
-    void deleteBoardWhenExistLikes(){
+    void deleteBoardWhenExistLikesTest(){
         User user = User.builder()
                 .userid("userid")
                 .password("password")
@@ -199,7 +237,7 @@ public class BoardServiceTests {
     @Test
     @Transactional
     @DisplayName("좋아요 top5 게시판 조회 테스트")
-    void getBoardTop(){
+    void getBoardTopTest(){
         User user = User.builder()
                 .userid("userid")
                 .password("password")
@@ -254,7 +292,7 @@ public class BoardServiceTests {
     @Test
     @Transactional
     @DisplayName("전체 게시판 조회 테스트")
-    void getAllBoard(){
+    void getAllBoardTest(){
         User user = User.builder()
                 .userid("userid")
                 .password("password")
@@ -300,5 +338,49 @@ public class BoardServiceTests {
         for(ResponseBoard.getBoard response : list){
             System.out.println(response.getLocation());
         }
+    }
+    @Test
+    @Transactional
+    @DisplayName("위치 기반 게시판 조회 테스트")
+    void getBoardInRegionTest(){
+        User user = User.builder()
+                .userid("userid")
+                .password("password")
+                .build();
+        user = userRepository.save(user);
+        User user1 = User.builder()
+                .userid("userid1")
+                .password("password")
+                .build();
+        user1 = userRepository.save(user1);
+        //게시판 등록1
+        Walk walk = Walk.builder()
+                .user(user)
+                .location("광교호수공원")
+                .address("경기도 용인시 처인구")
+                .build();
+        walk = walkRepository.save(walk);
+        RequestBoard.register requestDto = RequestBoard.register.builder()
+                .walkId(walk.getId())
+                .title("게시판 제목")
+                .contents("내용입니다.")
+                .build();
+        boardService.registerBoard("userid", requestDto);
+        //게시판 등록2
+        Walk walk2 = Walk.builder()
+                .user(user1)
+                .location("공원2")
+                .address("경기도 안양시 동안구")
+                .build();
+        walk2 = walkRepository.save(walk2);
+        RequestBoard.register requestDto2 = RequestBoard.register.builder()
+                .walkId(walk2.getId())
+                .title("게시판 제목2")
+                .contents("게시판 내용입니다.2")
+                .build();
+        boardService.registerBoard("userid1", requestDto2);
+
+        List<ResponseBoard.getBoard> list =  boardService.getBoardInRegion("경기도 용인시 처인구");
+        assertEquals(1, list.size());
     }
 }

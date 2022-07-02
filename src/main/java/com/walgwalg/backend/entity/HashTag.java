@@ -18,7 +18,7 @@ public class HashTag {
     @Column(name = "tag")
     private String tag; //태그명
 
-    @ManyToOne(targetEntity = Board.class, fetch = FetchType.LAZY)
+    @ManyToOne( fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board; //게시물
 

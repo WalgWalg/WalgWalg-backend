@@ -38,6 +38,21 @@ public class BoardController {
                 .message("게시판 등록 성공")
                 .build(), HttpStatus.OK);
     }
+    @PostMapping("/board/update")
+    public ResponseEntity<ResponseMessage> updateBoard(HttpServletRequest request,@Valid @RequestBody RequestBoard.update requestDto){
+        Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
+        String userid = null;
+        if(token.isPresent()){
+            JwtAuthToken jwtAuthToken = jwtAuthTokenProvider.convertAuthToken(token.get());
+            userid = jwtAuthToken.getClaims().getSubject();
+        }
+        boardService.updateBoard(userid, requestDto);
+
+        return new ResponseEntity<>(ResponseMessage.builder()
+                .status(HttpStatus.OK.value())
+                .message("게시판 수정 성공")
+                .build(), HttpStatus.OK);
+    }
     @GetMapping("/board")
     public ResponseEntity<ResponseMessage> getAllBoard(){
         List<ResponseBoard.getBoard> response = boardService.getAllBoard();
@@ -56,6 +71,15 @@ public class BoardController {
                 .status(HttpStatus.OK.value())
                 .message("게시판 조회 성공")
                 .list(response)
+                .build(), HttpStatus.OK);
+    }
+    @GetMapping("/board/region/{region}")
+    public ResponseEntity<ResponseMessage> getBoardInRegion(@PathVariable String region){
+        List<ResponseBoard.getBoard> list = boardService.getBoardInRegion(region);
+        return new ResponseEntity<>(ResponseMessage.builder()
+                .status(HttpStatus.OK.value())
+                .message("위치기반 게시판 조회 성공")
+                .list(list)
                 .build(), HttpStatus.OK);
     }
 

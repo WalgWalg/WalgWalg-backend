@@ -15,7 +15,8 @@ public enum ErrorCode {
     LIKE_DUPLICATED(HttpStatus.FORBIDDEN,"LIKE_001", "LIKE_DUPLICATED"),
     NOT_FOUND_LIKE(HttpStatus.NOT_FOUND, "LIKE_002", "NOT_FOUND_LIKE"),
     SCRAP_DUPLICATED(HttpStatus.FORBIDDEN,"SCRAP_001", "SCRAP_DUPLICATED"),
-    NOT_FOUND_SCRAP(HttpStatus.NOT_FOUND, "SCRAP_002", "NOT_FOUND_SCRAP");
+    NOT_FOUND_SCRAP(HttpStatus.NOT_FOUND, "SCRAP_002", "NOT_FOUND_SCRAP"),
+    PARK_DUPLICATED(HttpStatus.FORBIDDEN, "PARK_001", "PARK_DUPLICATED");
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;

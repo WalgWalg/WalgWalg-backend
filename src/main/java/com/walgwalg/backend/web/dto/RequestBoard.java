@@ -36,4 +36,18 @@ public class RequestBoard {
         @NotNull(message = "작성자가 비어있음")
         private String writerId;
     }
+
+    @Builder
+    @Data
+    public static class update{
+        @NotNull( message = "게시판번호가 비어있음")
+        private String boardId;
+        @NotNull( message = "제목이 비어있음")
+        private String title;
+        @Builder.Default
+        private List<String> hashTags = new ArrayList<>();
+        @NotNull( message = "내용이 비어있음")
+        private String contents;
+
+    }
 }

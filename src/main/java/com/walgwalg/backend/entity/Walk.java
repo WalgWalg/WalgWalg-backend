@@ -78,4 +78,7 @@ public class Walk {
     public void addGps(Gps gps){
         this.gpsList.add(gps);
     }
+    public void addBoard(Board board){
+        this.board = board;
+    }
 }

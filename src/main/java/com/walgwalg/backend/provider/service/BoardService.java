@@ -47,8 +47,40 @@ public class BoardService implements BoardServiceInterface {
                 .user(user)
                 .build();
         board = boardRepository.save(board);
+        walk.addBoard(board);
         //해시태그가 있을 경우
+        if(!requestDto.getHashTags().isEmpty()){
+            for(String item: requestDto.getHashTags()){
+                HashTag hashTag = HashTag.builder()
+                        .tag(item)
+                        .board(board)
+                        .build();
+                hashTag = hashTagRepository.save(hashTag);
+                board.addHashTag(hashTag);
+            }
+        }
+    }
+    @Transactional
+    @Override
+    public void updateBoard(String userid, RequestBoard.update requestDto){
+        User user = userRepository.findByUserid(userid);
+        if(user == null){ //유저가 없을 경우
+            throw new NotFoundUserException();
+        }
+        Board board = boardRepository.findById(requestDto.getBoardId()).orElseThrow(()-> new NotFoundBoardException());
+        System.out.println(board.getHashTags().size());
+        List<HashTag> hashTags = hashTagRepository.findByBoard(board);
 
+        //이전 해시태그 지우기
+        for(HashTag hashTag : hashTags){
+            board.getHashTags().remove(hashTag);
+            hashTagRepository.delete(hashTag);
+        }
+
+        //게시판 업데이트
+        board.updateBoard(requestDto.getTitle(), requestDto.getContents());
+
+        //업데이트 한 해시태그가 있을 경우
         if(!requestDto.getHashTags().isEmpty()){
             for(String item: requestDto.getHashTags()){
                 HashTag hashTag = HashTag.builder()
@@ -94,7 +126,6 @@ public class BoardService implements BoardServiceInterface {
                 list.add(ResponseBoard.list.of(board));
             }
         }
-
         return list;
     }
 
@@ -109,6 +140,7 @@ public class BoardService implements BoardServiceInterface {
         if(board == null){
             throw new NotFoundBoardException();
         }
+        walkRepository.delete(board.getWalk());
         boardRepository.delete(board);
     }
     @Transactional
@@ -128,4 +160,25 @@ public class BoardService implements BoardServiceInterface {
         }
         return list;
     }
+
+    @Transactional
+    @Override
+    public List<ResponseBoard.getBoard> getBoardInRegion(String region){
+        List<ResponseBoard.getBoard> list = new ArrayList<>();
+        List<Walk> walkList = walkRepository.findByAddressStartsWith(region);
+//        List<Board> boardList = boardRepository.findByRegion(region);
+//        System.out.println(boardList.size());
+//        for(Board board : boardList){
+//            list.add(ResponseBoard.getBoard.of(board));
+//        }
+        for(Walk walk : walkList){
+            Board board = walk.getBoard();
+            if(board !=null){
+                list.add(ResponseBoard.getBoard.of(board));
+            }
+        }
+
+        return list;
+    }
+
 }

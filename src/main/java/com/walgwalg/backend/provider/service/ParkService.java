@@ -1,8 +1,7 @@
 package com.walgwalg.backend.provider.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.walgwalg.backend.entity.Park;
+import com.walgwalg.backend.exception.errors.DuplicatedParkException;
 import com.walgwalg.backend.repository.ParkRepository;
 import com.walgwalg.backend.web.dto.ParkInfo;
 import com.walgwalg.backend.web.dto.RequestPark;
@@ -36,13 +35,13 @@ public class ParkService {
         public List<ResponsePark.getAll> getAllPark(){
             List<ResponsePark.getAll> list = new ArrayList<>();
             List<Park> parkList = parkRepository.findAll();
-            for (Park park : parkList){
+            for (Park item : parkList){
                 ResponsePark.getAll response = ResponsePark.getAll.builder()
-                        .parkName(park.getParkName())
-                        .roadAddress(park.getRoadAddress())
-                        .numberAddress(park.getNumberAddress())
-                        .latitude(park.getLatitude())
-                        .longitude(park.getLongitude())
+                        .parkName(item.getParkName())
+                        .roadAddress(item.getRoadAddress())
+                        .numberAddress(item.getNumberAddress())
+                        .latitude(item.getLatitude())
+                        .longitude(item.getLongitude())
                         .build();
                 list.add(response);
             }
@@ -52,5 +51,22 @@ public class ParkService {
         @Transactional
         public void deleteAllPark(){
             parkRepository.deleteAll();
+        }
+
+        @Transactional
+        public List<ResponsePark.getPark> getParkInRegion(String region){
+            List<Park> parkList =parkRepository.findByNumberAddressStartsWith(region);
+            List<ResponsePark.getPark> list = new ArrayList<>();
+            for(Park park : parkList){
+                ResponsePark.getPark response = ResponsePark.getPark.builder()
+                        .parkName(park.getParkName())
+                        .roadAddress(park.getRoadAddress())
+                        .numberAddress(park.getNumberAddress())
+                        .latitude(park.getLatitude())
+                        .longitude(park.getLongitude())
+                        .build();
+                list.add(response);
+            }
+            return list;
         }
 }

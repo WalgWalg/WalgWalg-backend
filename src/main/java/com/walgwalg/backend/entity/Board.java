@@ -27,7 +27,7 @@ public class Board {
     @CreationTimestamp
     private Date timestamp = new Date();
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<HashTag> hashTags = new ArrayList<>(); //해시태그
 
     @Column(name = "contents")
@@ -54,6 +54,11 @@ public class Board {
         this.walk = walk;
         this.user = user;
     }
+    public void updateBoard(String title,String contents){
+        this.title = title;
+        this.contents = contents;
+    }
+
     public void addLikes(Likes likes){
         this.likesList.add(likes);
     }

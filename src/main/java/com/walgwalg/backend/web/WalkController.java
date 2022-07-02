@@ -155,10 +155,10 @@ public class WalkController {
             System.out.println("산책 통계 조회 실패");
         }
 
-
         return new ResponseEntity<>(ResponseMessage.builder()
                 .status(HttpStatus.OK.value())
                 .message("산책 통계 조회 성공")
+                .list(response)
                 .build(), HttpStatus.OK);
 
     }

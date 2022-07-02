@@ -11,6 +11,7 @@ com\walgwalg\backend\web\dto\ParkInfo$ParkInfoBuilder.class
 com\walgwalg\backend\web\dto\RequestBoard$register$registerBuilder.class
 com\walgwalg\backend\web\dto\RequestBoard$scrap.class
 com\walgwalg\backend\web\dto\RequestBoard$scrap$scrapBuilder.class
+com\walgwalg\backend\web\dto\ResponseWalk$mainInfo$mainInfoBuilder.class
 com\walgwalg\backend\web\dto\RequestPark$RequestParkBuilder.class
 com\walgwalg\backend\repository\BoardRepository.class
 com\walgwalg\backend\web\dto\RequestUser$login.class
@@ -21,6 +22,7 @@ com\walgwalg\backend\core\service\LikeServiceInterface.class
 com\walgwalg\backend\web\BoardController.class
 com\walgwalg\backend\web\dto\ResponseHashtag$Hashtag.class
 com\walgwalg\backend\core\service\BoardServiceInterface.class
+com\walgwalg\backend\exception\errors\DuplicatedParkException.class
 com\walgwalg\backend\web\dto\ResponseUser$login$loginBuilder.class
 com\walgwalg\backend\web\dto\ResponseWalk.class
 com\walgwalg\backend\entity\User$UserBuilder.class
@@ -29,6 +31,7 @@ com\walgwalg\backend\provider\service\ParkService.class
 com\walgwalg\backend\provider\service\WalkService.class
 com\walgwalg\backend\entity\User.class
 com\walgwalg\backend\configuration\InterceptorConfig.class
+com\walgwalg\backend\web\dto\RequestBoard$update.class
 com\walgwalg\backend\web\dto\ResponsePark$getAll$getAllBuilder.class
 com\walgwalg\backend\web\dto\RequestWalk$addGps$addGpsBuilder.class
 com\walgwalg\backend\exception\GlobalExceptionHandler.class
@@ -60,6 +63,7 @@ com\walgwalg\backend\repository\WalkRepository.class
 com\walgwalg\backend\web\dto\ResponseBoard$getBoard.class
 com\walgwalg\backend\web\dto\ResponseWalk$list.class
 com\walgwalg\backend\web\dto\ParkInfo.class
+com\walgwalg\backend\web\dto\RequestBoard$update$updateBuilder.class
 com\walgwalg\backend\entity\Likes.class
 com\walgwalg\backend\web\dto\ResponseUser$Token$TokenBuilder.class
 com\walgwalg\backend\web\dto\ResponseBoard.class
@@ -75,6 +79,7 @@ com\walgwalg\backend\web\dto\RequestWalk$start.class
 com\walgwalg\backend\web\dto\ResponseLike$MyLike.class
 com\walgwalg\backend\web\dto\ResponseMessage.class
 com\walgwalg\backend\exception\errors\RegisterFailedException.class
+com\walgwalg\backend\web\dto\ResponsePark$getPark.class
 com\walgwalg\backend\web\dto\ResponseWalk$total$totalBuilder.class
 com\walgwalg\backend\provider\service\LikeService.class
 com\walgwalg\backend\repository\GpsRepository.class
@@ -84,12 +89,14 @@ com\walgwalg\backend\web\dto\RequestWalk$start$startBuilder.class
 com\walgwalg\backend\configuration\S3Config.class
 com\walgwalg\backend\web\dto\ResponseScrap.class
 com\walgwalg\backend\provider\security\JwtAuthToken.class
+com\walgwalg\backend\web\dto\ResponseUser$Info$InfoBuilder.class
 com\walgwalg\backend\entity\Board$BoardBuilder.class
 com\walgwalg\backend\exception\errors\DuplicatedScrapException.class
 com\walgwalg\backend\web\dto\ResponseWalk$calendar.class
 com\walgwalg\backend\entity\Likes$LikesBuilder.class
 com\walgwalg\backend\web\dto\ResponseHashtag.class
 com\walgwalg\backend\exception\errors\DuplicatedWalkException.class
+com\walgwalg\backend\web\dto\ResponseWalk$mainInfo.class
 com\walgwalg\backend\web\dto\ResponseBoard$top.class
 com\walgwalg\backend\entity\Board.class
 com\walgwalg\backend\web\dto\ResponseHashtag$Hashtag$HashtagBuilder.class
@@ -105,6 +112,7 @@ com\walgwalg\backend\core\service\UserServiceInterface.class
 com\walgwalg\backend\web\WalkController.class
 com\walgwalg\backend\entity\Walk$WalkBuilder.class
 com\walgwalg\backend\web\dto\RequestUser$changeInfo$changeInfoBuilder.class
+com\walgwalg\backend\web\dto\ResponsePark$getPark$getParkBuilder.class
 com\walgwalg\backend\repository\LikesRepository.class
 com\walgwalg\backend\web\dto\RequestUser$changeInfo.class
 com\walgwalg\backend\core\security\role\Role.class
@@ -120,6 +128,8 @@ com\walgwalg\backend\web\dto\ResponseLike$MyLike$MyLikeBuilder.class
 com\walgwalg\backend\web\dto\ResponseUser$Token.class
 com\walgwalg\backend\entity\HashTag.class
 com\walgwalg\backend\repository\ScrapRepository.class
+com\walgwalg\backend\web\dto\ResponseUser$Info.class
 com\walgwalg\backend\web\dto\ResponseBoard$list.class
 com\walgwalg\backend\web\dto\ResponseGps$gps.class
+com\walgwalg\backend\provider\service\S3Service.class
 com\walgwalg\backend\exception\errors\NotFoundLikesException.class
