@@ -166,11 +166,7 @@ public class BoardService implements BoardServiceInterface {
     public List<ResponseBoard.getBoard> getBoardInRegion(String region){
         List<ResponseBoard.getBoard> list = new ArrayList<>();
         List<Walk> walkList = walkRepository.findByAddressStartsWith(region);
-//        List<Board> boardList = boardRepository.findByRegion(region);
-//        System.out.println(boardList.size());
-//        for(Board board : boardList){
-//            list.add(ResponseBoard.getBoard.of(board));
-//        }
+
         for(Walk walk : walkList){
             Board board = walk.getBoard();
             if(board !=null){

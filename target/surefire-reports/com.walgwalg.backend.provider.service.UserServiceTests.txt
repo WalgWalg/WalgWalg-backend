@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.walgwalg.backend.provider.service.UserServiceTests
--------------------------------------------------------------------------------
-Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.87 s - in com.walgwalg.backend.provider.service.UserServiceTests

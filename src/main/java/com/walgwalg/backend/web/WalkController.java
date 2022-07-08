@@ -71,8 +71,8 @@ public class WalkController {
     }
     @PostMapping("/walk/finish")
     public ResponseEntity<ResponseMessage> registerWalk(HttpServletRequest request,
-                                                        @RequestPart(value = "file", required = false) MultipartFile file,
-                                                        @Valid @RequestPart(value = "requestDto") RequestWalk.registerWalk requestDto){
+                                                        @RequestPart MultipartFile file,
+                                                        @Valid @RequestPart RequestWalk.registerWalk requestDto){
         Optional<String> token = jwtAuthTokenProvider.getAuthToken(request);
         String userid = null;
         if(token.isPresent()){
