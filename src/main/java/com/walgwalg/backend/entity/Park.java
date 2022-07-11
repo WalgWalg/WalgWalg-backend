@@ -6,7 +6,10 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Table(name = "Park")
+@Table(name = "Park",indexes = {
+        @Index(name = "idx_park_number_address", columnList = "number_address")
+}
+)
 @Getter
 @Entity
 @NoArgsConstructor

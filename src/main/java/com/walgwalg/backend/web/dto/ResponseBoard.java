@@ -15,6 +15,7 @@ public class ResponseBoard {
     @Data
     public static class getBoard{
         private String boardId;
+        private Date date;
         private String title;
         private String contents;
         private List<String> hashTags;
@@ -39,6 +40,7 @@ public class ResponseBoard {
             }
             return getBoard.builder()
                     .boardId(board.getId())
+                    .date(board.getTimestamp())
                     .title(board.getTitle())
                     .contents(board.getContents())
                     .hashTags(hashTagList)
@@ -61,6 +63,8 @@ public class ResponseBoard {
         private String image;
         private Date date;
         private List<String> hashTags;
+        //좋아요
+        private Integer likes;
 
         public static list of(Board board){
             List<String> hashTagList = new ArrayList<>();
@@ -75,6 +79,7 @@ public class ResponseBoard {
                     .image(board.getWalk().getCourse())
                     .date(board.getTimestamp())
                     .hashTags(hashTagList)
+                    .likes(board.getLikesList().size())
                     .build();
         }
     }

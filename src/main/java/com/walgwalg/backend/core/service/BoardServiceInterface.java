@@ -12,7 +12,7 @@ public interface BoardServiceInterface {
     List<ResponseBoard.list> getMyBoard(String userId);
     void deleteBoard(String userId, String boardId);
     List<ResponseBoard.top> getBoardTop();
-    List<ResponseBoard.getBoard> getAllBoard();
-    List<ResponseBoard.getBoard> getBoardInRegion(String region);
+    List<ResponseBoard.list> getAllBoard();
+    List<ResponseBoard.list> getBoardInRegion(String region);
     void updateBoard(String userid, RequestBoard.update requestDto);
 }

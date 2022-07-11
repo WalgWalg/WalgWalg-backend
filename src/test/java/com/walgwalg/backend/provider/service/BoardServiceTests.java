@@ -334,9 +334,9 @@ public class BoardServiceTests {
         //좋아요
         likeService.addLike("userid", board2.getId());
         likeService.addLike("userid1", board2.getId());
-        List<ResponseBoard.getBoard> list =  boardService.getAllBoard();
-        for(ResponseBoard.getBoard response : list){
-            System.out.println(response.getLocation());
+        List<ResponseBoard.list> list =  boardService.getAllBoard();
+        for(ResponseBoard.list response : list){
+            System.out.println(response.getDate());
         }
     }
     @Test
@@ -380,7 +380,7 @@ public class BoardServiceTests {
                 .build();
         boardService.registerBoard("userid1", requestDto2);
 
-        List<ResponseBoard.getBoard> list =  boardService.getBoardInRegion("경기도 용인시 처인구");
+        List<ResponseBoard.list> list =  boardService.getBoardInRegion("경기도 용인시 처인구");
         assertEquals(1, list.size());
     }
 }

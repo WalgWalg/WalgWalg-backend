@@ -102,11 +102,11 @@ public class BoardService implements BoardServiceInterface {
     }
     @Transactional
     @Override
-    public List<ResponseBoard.getBoard> getAllBoard(){
+    public List<ResponseBoard.list> getAllBoard(){
         List<Board> boardList = boardRepository.findAll();
-        List<ResponseBoard.getBoard> response = new ArrayList<>();
+        List<ResponseBoard.list> response = new ArrayList<>();
         for(Board board : boardList){
-            response.add(ResponseBoard.getBoard.of(board));
+            response.add(ResponseBoard.list.of(board));
         }
         return response;
     }
@@ -163,14 +163,14 @@ public class BoardService implements BoardServiceInterface {
 
     @Transactional
     @Override
-    public List<ResponseBoard.getBoard> getBoardInRegion(String region){
-        List<ResponseBoard.getBoard> list = new ArrayList<>();
+    public List<ResponseBoard.list> getBoardInRegion(String region){
+        List<ResponseBoard.list> list = new ArrayList<>();
         List<Walk> walkList = walkRepository.findByAddressStartsWith(region);
 
         for(Walk walk : walkList){
             Board board = walk.getBoard();
             if(board !=null){
-                list.add(ResponseBoard.getBoard.of(board));
+                list.add(ResponseBoard.list.of(board));
             }
         }
 

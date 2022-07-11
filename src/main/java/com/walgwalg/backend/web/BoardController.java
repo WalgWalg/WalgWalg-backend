@@ -55,7 +55,7 @@ public class BoardController {
     }
     @GetMapping("/board")
     public ResponseEntity<ResponseMessage> getAllBoard(){
-        List<ResponseBoard.getBoard> response = boardService.getAllBoard();
+        List<ResponseBoard.list> response = boardService.getAllBoard();
         return new ResponseEntity<>(ResponseMessage.builder()
                 .status(HttpStatus.OK.value())
                 .message("게시판 전체 조회 성공")
@@ -75,7 +75,7 @@ public class BoardController {
     }
     @GetMapping("/board/region/{region}")
     public ResponseEntity<ResponseMessage> getBoardInRegion(@PathVariable String region){
-        List<ResponseBoard.getBoard> list = boardService.getBoardInRegion(region);
+        List<ResponseBoard.list> list = boardService.getBoardInRegion(region);
         return new ResponseEntity<>(ResponseMessage.builder()
                 .status(HttpStatus.OK.value())
                 .message("위치기반 게시판 조회 성공")
