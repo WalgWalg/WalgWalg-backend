@@ -2,40 +2,31 @@ package com.walgwalg.backend.provider.service;
 
 import com.walgwalg.backend.core.service.WalkServiceInterface;
 import com.walgwalg.backend.entity.Gps;
-import com.walgwalg.backend.entity.User;
+import com.walgwalg.backend.entity.Users;
 import com.walgwalg.backend.entity.Walk;
-import com.walgwalg.backend.exception.errors.DuplicatedWalkException;
 import com.walgwalg.backend.exception.errors.NotFoundUserException;
 import com.walgwalg.backend.exception.errors.NotFoundWalkException;
 import com.walgwalg.backend.repository.GpsRepository;
-import com.walgwalg.backend.repository.UserRepository;
+import com.walgwalg.backend.repository.UsersRepository;
 import com.walgwalg.backend.repository.WalkRepository;
-import com.walgwalg.backend.web.dto.RequestWalk;
 import com.walgwalg.backend.web.dto.ResponseGps;
 import com.walgwalg.backend.web.dto.ResponseWalk;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.jni.Local;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class WalkService implements WalkServiceInterface {
-    private final UserRepository userRepository;
+    private final UsersRepository usersRepository;
     private final WalkRepository walkRepository;
     private final GpsRepository gpsRepository;
     private final S3Service s3Service;
@@ -43,12 +34,12 @@ public class WalkService implements WalkServiceInterface {
     @Override
     @Transactional
     public Map<String, String> startWalk(String userid, Date walkDate,String location, String address){
-        User user = userRepository.findByUserid(userid);
+        Users user = usersRepository.findByUserid(userid);
         if(user == null){
             throw new NotFoundUserException();
         }
          Walk walk = Walk.builder()
-                .user(user)
+                .users(user)
                 .walkDate(walkDate)
                 .location(location)
                 .address(address)
@@ -62,11 +53,11 @@ public class WalkService implements WalkServiceInterface {
     @Override
     @Transactional
     public void addGps(String userid, String walkId, String latitude, String longitude){
-        User user = userRepository.findByUserid(userid);
+        Users user = usersRepository.findByUserid(userid);
         if(user == null){
             throw new NotFoundUserException();
         }
-        Walk walk = walkRepository.findByUserAndId(user, walkId);
+        Walk walk = walkRepository.findByUsersAndId(user, walkId);
         if(walk == null){
             throw new NotFoundWalkException();
         }
@@ -98,11 +89,11 @@ public class WalkService implements WalkServiceInterface {
     @Transactional
     public void registerWalk(String userid,MultipartFile course,String walkId, Integer stepCount,
                              Integer distance, Integer calorie, String walkTime) throws ParseException {
-        User user = userRepository.findByUserid(userid);
+        Users user = usersRepository.findByUserid(userid);
         if(user == null){
             throw new NotFoundUserException();
         }
-        Walk walk = walkRepository.findByUserAndId(user, walkId);
+        Walk walk = walkRepository.findByUsersAndId(user, walkId);
         if(walk == null){
             throw new NotFoundWalkException();
         }
@@ -121,11 +112,11 @@ public class WalkService implements WalkServiceInterface {
     @Override
     @Transactional
     public List<ResponseWalk.list> getAllMyWalk(String userid){
-        User user = userRepository.findByUserid(userid);
+        Users user = usersRepository.findByUserid(userid);
         if(user == null){
             throw new NotFoundUserException();
         }
-        List<Walk> walkList = walkRepository.findByUser(user);
+        List<Walk> walkList = walkRepository.findByUsers(user);
         List<ResponseWalk.list> list = new ArrayList<>();
         for(Walk walk : walkList){
             ResponseWalk.list responseDto = ResponseWalk.list.builder()
@@ -146,11 +137,11 @@ public class WalkService implements WalkServiceInterface {
     @Override
     @Transactional
     public void deleteWalk(String userId, String walkId){
-        User user = userRepository.findByUserid(userId);
+        Users user = usersRepository.findByUserid(userId);
         if(user == null){
             throw new NotFoundUserException();
         }
-        Walk walk = walkRepository.findByUserAndId(user, walkId);
+        Walk walk = walkRepository.findByUsersAndId(user, walkId);
         if(walk == null){
             throw new NotFoundWalkException();
         }
@@ -161,11 +152,11 @@ public class WalkService implements WalkServiceInterface {
     public Map<Date, ResponseWalk.calendar> getWalkForCalendar(String userId){
         Map<Date, ResponseWalk.calendar> map = new HashMap<>();
 
-        User user = userRepository.findByUserid(userId);
+        Users user = usersRepository.findByUserid(userId);
         if(user == null){
             throw new NotFoundUserException();
         }
-        List<Walk> walkList = walkRepository.findByUser(user);
+        List<Walk> walkList = walkRepository.findByUsers(user);
         for(Walk walk : walkList){
             ResponseWalk.calendar response = ResponseWalk.calendar.builder()
                     .distance(walk.getDistance())
@@ -181,7 +172,7 @@ public class WalkService implements WalkServiceInterface {
     @Override
     public ResponseWalk.mainInfo getTotalWalk(String userid) throws ParseException{
         Map<String, ResponseWalk.total> map = new HashMap<>();
-        User user = userRepository.findByUserid(userid);
+        Users user = usersRepository.findByUserid(userid);
         if(user == null){
             throw new NotFoundUserException();
         }
@@ -192,7 +183,7 @@ public class WalkService implements WalkServiceInterface {
         LocalDate next = LocalDate.now().plusDays(1);
         Date today = format.parse(now.toString());
         Date nextDate = format.parse(next.toString());
-        List<Walk> todayWalkList = walkRepository.findByUserAndWalkDateBetween(today, nextDate, user);
+        List<Walk> todayWalkList = walkRepository.findByUsersAndWalkDateBetween(today, nextDate, user);
 
         ResponseWalk.total daily = ResponseWalk.total.builder()
                 .stepCount(walkRepository.findByStepCount(today, today, user))
@@ -206,7 +197,7 @@ public class WalkService implements WalkServiceInterface {
         LocalDate end = LocalDate.now().with(TemporalAdjusters.firstDayOfNextMonth());
         Date startDate = format.parse(start.toString());
         Date endDate = format.parse(end.toString());
-        List<Walk> monthWalkList = walkRepository.findByUserAndWalkDateBetween(startDate, endDate, user);
+        List<Walk> monthWalkList = walkRepository.findByUsersAndWalkDateBetween(startDate, endDate, user);
 
             ResponseWalk.total month = ResponseWalk.total.builder()
                     .stepCount(walkRepository.findByStepCount(startDate, endDate, user))

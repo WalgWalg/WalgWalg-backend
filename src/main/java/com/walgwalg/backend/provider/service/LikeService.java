@@ -3,14 +3,14 @@ package com.walgwalg.backend.provider.service;
 import com.walgwalg.backend.core.service.LikeServiceInterface;
 import com.walgwalg.backend.entity.Board;
 import com.walgwalg.backend.entity.Likes;
-import com.walgwalg.backend.entity.User;
+import com.walgwalg.backend.entity.Users;
 import com.walgwalg.backend.exception.errors.DuplicatedLikeException;
 import com.walgwalg.backend.exception.errors.NotFoundBoardException;
 import com.walgwalg.backend.exception.errors.NotFoundLikesException;
 import com.walgwalg.backend.exception.errors.NotFoundUserException;
 import com.walgwalg.backend.repository.BoardRepository;
 import com.walgwalg.backend.repository.LikesRepository;
-import com.walgwalg.backend.repository.UserRepository;
+import com.walgwalg.backend.repository.UsersRepository;
 import com.walgwalg.backend.web.dto.ResponseLike;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,25 +23,25 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LikeService implements LikeServiceInterface {
     private final LikesRepository likesRepository;
-    private final UserRepository userRepository;
+    private final UsersRepository usersRepository;
     private final BoardRepository boardRepository;
 
     @Transactional
     @Override
     public void addLike(String userid, String boardId){
-        User user = userRepository.findByUserid(userid);
+        Users user = usersRepository.findByUserid(userid);
         if(user == null){ //유저가 없을 경우
             throw new NotFoundUserException();
         }
         Board board = boardRepository.findById(boardId).orElseThrow(()->new NotFoundBoardException());
 
-        Likes like = likesRepository.findByUserAndBoard(user, board);
+        Likes like = likesRepository.findByUsersAndBoard(user, board);
         if(like != null){ //이미 좋아요 눌렀을 경우
             throw new DuplicatedLikeException();
         }
         //좋아요 추가
         like = Likes.builder()
-                .user(user)
+                .users(user)
                 .board(board)
                 .build();
         like = likesRepository.save(like);
@@ -52,11 +52,11 @@ public class LikeService implements LikeServiceInterface {
     @Override
     @Transactional
     public List<ResponseLike.MyLike> listLikeBoard(String userid){
-        User user = userRepository.findByUserid(userid); //유저 꺼내기
+        Users user = usersRepository.findByUserid(userid); //유저 꺼내기
         if(user == null){//유저가 없으면
             throw new NotFoundUserException();
         }
-        List<Likes> likeList = likesRepository.findByUser(user);//좋아요 리스트 꺼내기
+        List<Likes> likeList = likesRepository.findByUsers(user);//좋아요 리스트 꺼내기
 
         List<ResponseLike.MyLike> boards =new ArrayList<>();
 
@@ -71,12 +71,12 @@ public class LikeService implements LikeServiceInterface {
     @Transactional
     @Override
     public void deleteLikeBoard(String userid ,String boardId){
-        User user = userRepository.findByUserid(userid);
+        Users user = usersRepository.findByUserid(userid);
         if(user == null){ //유저가 없을 경우
             throw new NotFoundUserException();
         }
         Board board = boardRepository.findById(boardId).orElseThrow(()->new NotFoundBoardException());
-        Likes likes = likesRepository.findByUserAndBoard(user, board);
+        Likes likes = likesRepository.findByUsersAndBoard(user, board);
         if(likes == null){
             throw new NotFoundLikesException();
         }

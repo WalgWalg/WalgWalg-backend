@@ -8,11 +8,11 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Table(name="user")
+@Table(name="users")
 @Entity
 @Getter
 @NoArgsConstructor
-public class User {
+public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -32,26 +32,26 @@ public class User {
     @Column(name="salt")
     private String salt;
 
-    @Column(name="refreshToken")
+    @Column(name="refresh_token")
     private String refreshToken;
 
     @Column(name = "profile")
     private String profile; //프로필 사진 경로
     
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "users")
     private List<Board> boardList = new ArrayList<>(); //게시판 리스트
     
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "users")
     private List<Walk> walkList = new ArrayList<>(); // 산책 리스트
     
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "users")
     private List<Likes> likeList = new ArrayList<>(); //좋아요 리스트
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "users")
     private List<Scrap> scrapList = new ArrayList<>(); //스크랩 리스트
 
     @Builder
-    public User(String userid, String password, String nickname, String address, String salt){
+    public Users(String userid, String password, String nickname, String address, String salt){
         this.userid = userid;
         this.password = password;
         this.nickname = nickname;

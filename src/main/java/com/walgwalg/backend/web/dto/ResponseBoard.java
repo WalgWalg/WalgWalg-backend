@@ -49,7 +49,7 @@ public class ResponseBoard {
                     .calorie(walk.getCalorie())
                     .course(walk.getCourse())
                     .location(walk.getLocation())
-                    .nickname(board.getUser().getNickname())
+                    .nickname(board.getUsers().getNickname())
                     .likes(board.getLikesList().size())
                     .build();
         }

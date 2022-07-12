@@ -1,16 +1,12 @@
 package com.walgwalg.backend.provider.service;
 
-import com.amazonaws.Response;
 import com.walgwalg.backend.core.service.BoardServiceInterface;
 import com.walgwalg.backend.entity.*;
-import com.walgwalg.backend.exception.errors.DuplicatedLikeException;
-import com.walgwalg.backend.exception.errors.DuplicatedScrapException;
 import com.walgwalg.backend.exception.errors.NotFoundBoardException;
 import com.walgwalg.backend.exception.errors.NotFoundUserException;
 import com.walgwalg.backend.repository.*;
 import com.walgwalg.backend.web.dto.RequestBoard;
 import com.walgwalg.backend.web.dto.ResponseBoard;
-import com.walgwalg.backend.web.dto.ResponseUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -24,18 +20,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BoardService implements BoardServiceInterface {
     private final BoardRepository boardRepository;
-    private final UserRepository userRepository;
+    private final UsersRepository usersRepository;
     private final WalkRepository walkRepository;
     private final HashTagRepository hashTagRepository;
 
     @Transactional
     @Override
     public void registerBoard(String userid, RequestBoard.register requestDto){
-        User user = userRepository.findByUserid(userid);
+        Users user = usersRepository.findByUserid(userid);
         if(user == null){ //유저가 없을 경우
             throw new NotFoundUserException();
         }
-        Walk walk = walkRepository.findByUserAndId(user, requestDto.getWalkId());
+        Walk walk = walkRepository.findByUsersAndId(user, requestDto.getWalkId());
         if(walk == null){ //해당 산책이 없을 경우
             throw new NotFoundUserException();
         }
@@ -44,7 +40,7 @@ public class BoardService implements BoardServiceInterface {
                 .title(requestDto.getTitle())
                 .contents(requestDto.getContents())
                 .walk(walk)
-                .user(user)
+                .users(user)
                 .build();
         board = boardRepository.save(board);
         walk.addBoard(board);
@@ -63,7 +59,7 @@ public class BoardService implements BoardServiceInterface {
     @Transactional
     @Override
     public void updateBoard(String userid, RequestBoard.update requestDto){
-        User user = userRepository.findByUserid(userid);
+        Users user = usersRepository.findByUserid(userid);
         if(user == null){ //유저가 없을 경우
             throw new NotFoundUserException();
         }
@@ -114,13 +110,13 @@ public class BoardService implements BoardServiceInterface {
     @Transactional
     @Override
     public List<ResponseBoard.list> getMyBoard(String userId){
-        User user = userRepository.findByUserid(userId);
+        Users user = usersRepository.findByUserid(userId);
         if(user == null){ //유저가 없을 경우
             throw new NotFoundUserException();
         }
         List<ResponseBoard.list> list = new ArrayList<>();
 
-        List<Board> boardList = boardRepository.findByUser(user);
+        List<Board> boardList = boardRepository.findByUsers(user);
         if(!boardList.isEmpty()){//게시판이 있을 경우
             for(Board board : boardList){
                 list.add(ResponseBoard.list.of(board));
@@ -132,11 +128,11 @@ public class BoardService implements BoardServiceInterface {
     @Transactional
     @Override
     public void deleteBoard(String userId, String boardId){
-        User user = userRepository.findByUserid(userId);
+        Users user = usersRepository.findByUserid(userId);
         if(user == null){ //유저가 없을 경우
             throw new NotFoundUserException();
         }
-        Board board = boardRepository.findByIdAndUser(boardId, user);
+        Board board = boardRepository.findByIdAndUsers(boardId, user);
         if(board == null){
             throw new NotFoundBoardException();
         }

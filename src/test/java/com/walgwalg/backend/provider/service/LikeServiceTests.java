@@ -2,11 +2,10 @@ package com.walgwalg.backend.provider.service;
 
 import com.walgwalg.backend.entity.Board;
 import com.walgwalg.backend.entity.Likes;
-import com.walgwalg.backend.entity.User;
-import com.walgwalg.backend.exception.errors.NotFoundBoardException;
+import com.walgwalg.backend.entity.Users;
 import com.walgwalg.backend.repository.BoardRepository;
 import com.walgwalg.backend.repository.LikesRepository;
-import com.walgwalg.backend.repository.UserRepository;
+import com.walgwalg.backend.repository.UsersRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ActiveProfiles("test")
 public class LikeServiceTests {
     @Autowired
-    private UserRepository userRepository;
+    private UsersRepository usersRepository;
     @Autowired
     private BoardRepository boardRepository;
     @Autowired
@@ -34,43 +33,43 @@ public class LikeServiceTests {
     @Transactional
     @DisplayName("좋아요 추가 테스트")
     void addLikeTest(){
-        User user = User.builder()
+        Users user = Users.builder()
                 .userid("userid")
                 .password("password")
                 .build();
-        userRepository.save(user);
+        usersRepository.save(user);
         //게시물 작성
         Board board = Board.builder()
                 .title("title")
-                .user(userRepository.findByUserid("userid"))
+                .users(usersRepository.findByUserid("userid"))
                 .build();
         board = boardRepository.save(board);
         user.addBoard(board);
 
         //좋아요
         likeService.addLike("userid", board.getId());
-        assertNotNull(likesRepository.findByUser(userRepository.findByUserid("userid")));
+        assertNotNull(likesRepository.findByUsers(usersRepository.findByUserid("userid")));
     }
     @Test
     @Transactional
     @DisplayName("좋아요 삭제 테스트")
     void deleteLike(){
 
-        User user = User.builder()
+        Users user = Users.builder()
                 .userid("userid")
                 .password("password")
                 .build();
-        user = userRepository.save(user);
+        user = usersRepository.save(user);
         //게시물 작성
         Board board = Board.builder()
                 .title("title")
-                .user(userRepository.findByUserid("userid"))
+                .users(usersRepository.findByUserid("userid"))
                 .build();
         board = boardRepository.save(board);
         user.addBoard(board);
         //좋아요
         Likes likes = Likes.builder()
-                .user(user)
+                .users(user)
                 .board(board)
                 .build();
         likes = likesRepository.save(likes);
@@ -78,7 +77,7 @@ public class LikeServiceTests {
         board.addLikes(likes);
         //좋아요 삭제
         likeService.deleteLikeBoard("userid",board.getId());
-        assertNull(likesRepository.findByUserAndBoard(user, board));
+        assertNull(likesRepository.findByUsersAndBoard(user, board));
     }
 
 
@@ -86,13 +85,13 @@ public class LikeServiceTests {
     @Transactional
     @DisplayName("좋아요 리스트 테스트(성공)")
     void ListLikeBoardTest(){
-        User user = User.builder()
+        Users user = Users.builder()
                 .userid("userid")
                 .password("password")
                 .nickname("nick")
                 .address("address")
                 .build();
-        user =  userRepository.save(user);
+        user =  usersRepository.save(user);
         //게시판
         Board board = Board.builder()
                 .title("게시판")
@@ -104,9 +103,9 @@ public class LikeServiceTests {
         board1= boardRepository.save(board1);
 
         //좋아요
-        Likes like = Likes.builder().board(board).user(user).build();
+        Likes like = Likes.builder().board(board).users(user).build();
         likesRepository.save(like);
-        Likes like1 = Likes.builder().board(board1).user(user).build();
+        Likes like1 = Likes.builder().board(board1).users(user).build();
         likesRepository.save(like1);
         //좋아요 리스트 출력
         assertNotNull(likeService.listLikeBoard("userid"));

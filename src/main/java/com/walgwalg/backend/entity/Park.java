@@ -17,10 +17,11 @@ public class Park {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
     @Column(name = "park_name")
     private String parkName;
 
-    @Column(name = "road_Address")
+    @Column(name = "road_address")
     private String roadAddress;
 
     @Column(name = "number_address")

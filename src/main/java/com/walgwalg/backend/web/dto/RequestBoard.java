@@ -1,11 +1,9 @@
 package com.walgwalg.backend.web.dto;
 
-import com.walgwalg.backend.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;

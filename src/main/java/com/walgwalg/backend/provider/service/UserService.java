@@ -2,18 +2,14 @@ package com.walgwalg.backend.provider.service;
 
 import com.walgwalg.backend.core.security.role.Role;
 import com.walgwalg.backend.core.service.UserServiceInterface;
-import com.walgwalg.backend.entity.Board;
-import com.walgwalg.backend.entity.Likes;
-import com.walgwalg.backend.entity.User;
+import com.walgwalg.backend.entity.Users;
 import com.walgwalg.backend.exception.errors.CustomJwtRuntimeException;
 import com.walgwalg.backend.exception.errors.LoginFailedException;
 import com.walgwalg.backend.exception.errors.NotFoundUserException;
 import com.walgwalg.backend.exception.errors.RegisterFailedException;
 import com.walgwalg.backend.provider.security.JwtAuthToken;
 import com.walgwalg.backend.provider.security.JwtAuthTokenProvider;
-import com.walgwalg.backend.repository.BoardRepository;
-import com.walgwalg.backend.repository.LikesRepository;
-import com.walgwalg.backend.repository.UserRepository;
+import com.walgwalg.backend.repository.UsersRepository;
 import com.walgwalg.backend.util.SHA256Util;
 import com.walgwalg.backend.web.dto.RequestUser;
 import com.walgwalg.backend.web.dto.ResponseUser;
@@ -25,15 +21,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserServiceInterface {
-    private final UserRepository userRepository;
+    private final UsersRepository usersRepository;
     private final JwtAuthTokenProvider jwtAuthTokenProvider;
     private final S3Service s3Service;
 
@@ -41,12 +35,12 @@ public class UserService implements UserServiceInterface {
     @Override
     public void register(RequestUser.register registerDto){
         //아이디 중복 확인
-        User user = userRepository.findByUserid(registerDto.getUserid());
+        Users user = usersRepository.findByUserid(registerDto.getUserid());
         if(user != null){ //아이디 중복
             throw new RegisterFailedException();
         }
         //닉네임 중복 확인
-        user = userRepository.findByNickname(registerDto.getNickname());
+        user = usersRepository.findByNickname(registerDto.getNickname());
         if(user != null){//닉네임 중복
             throw new RegisterFailedException();
         }
@@ -55,27 +49,27 @@ public class UserService implements UserServiceInterface {
         //salt랑 비밀번호 암호화
         String encryptedPassword = SHA256Util.getEncrypt(registerDto.getPassword(),salt);
 
-        user = User.builder()
+        user = Users.builder()
                 .userid(registerDto.getUserid())
                 .password(encryptedPassword)
                 .nickname(registerDto.getNickname())
                 .address(registerDto.getAddress())
                 .salt(salt)
                 .build();
-        userRepository.save(user);
+        usersRepository.save(user);
     }
 
     @Override
     @Transactional
     public Optional<ResponseUser.login> login(RequestUser.login loginDto){
         //회원이 존재하는지
-        User user = userRepository.findByUserid(loginDto.getUserid());
+        Users user = usersRepository.findByUserid(loginDto.getUserid());
         if(user == null){//회원이 존재하지 않을 경우
             throw new LoginFailedException();
         }
         String salt = user.getSalt();
         //아이디가 있으면 거기 솔트 꺼내서 패스워드 암호화한다음 db에서 찾아보기
-        user = userRepository.findByUseridAndPassword(loginDto.getUserid(),SHA256Util.getEncrypt(loginDto.getPassword(),salt));
+        user = usersRepository.findByUseridAndPassword(loginDto.getUserid(),SHA256Util.getEncrypt(loginDto.getPassword(),salt));
         if(user == null){//비밀번호가 맞지 않을 경우
             throw new LoginFailedException();
         }
@@ -93,11 +87,11 @@ public class UserService implements UserServiceInterface {
     @Override
     @Transactional
     public void changeUserInfo(String userid, MultipartFile file, RequestUser.changeInfo changeInfoDto){
-        User user = userRepository.findByUserid(userid);
+        Users user = usersRepository.findByUserid(userid);
         if(user == null){//유저 정보가 없을 경우
             throw new NotFoundUserException();
         }
-        User user1 =userRepository.findByNickname(changeInfoDto.getNickname());
+        Users user1 = usersRepository.findByNickname(changeInfoDto.getNickname());
         if(user1 != null && !user.equals(user1)){//닉네임 중복
             throw new RegisterFailedException();
         }
@@ -124,7 +118,7 @@ public class UserService implements UserServiceInterface {
     @Transactional
     @Override
     public ResponseUser.Info getUserInfo(String userid){
-        User user = userRepository.findByUserid(userid);
+        Users user = usersRepository.findByUserid(userid);
         if(user == null){//유저 정보가 없을 경우
             throw new NotFoundUserException();
         }
@@ -142,7 +136,7 @@ public class UserService implements UserServiceInterface {
         if(token == null || token.equals("null")){
             throw new CustomJwtRuntimeException();
         }
-        User user = userRepository.findByRefreshToken(token);
+        Users user = usersRepository.findByRefreshToken(token);
         if(user == null){
             throw new NotFoundUserException();
         }

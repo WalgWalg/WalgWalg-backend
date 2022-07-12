@@ -23,9 +23,9 @@ public class Board {
     @Column(name = "title")
     private String title; //제목
 
-    @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
-    private Date timestamp = new Date();
+    @Column(name = "board_date")
+    private Date boardDate = new Date();
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<HashTag> hashTags = new ArrayList<>(); //해시태그
@@ -43,16 +43,16 @@ public class Board {
     @OneToMany(mappedBy = "board",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Scrap> scrapList = new ArrayList<>(); //스크랩
 
-    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user; // 유저
+    private Users users; // 유저
 
     @Builder
-    public Board(String title,String contents,Walk walk, User user){
+    public Board(String title,String contents,Walk walk, Users users){
         this.title = title;
         this.contents = contents;
         this.walk = walk;
-        this.user = user;
+        this.users = users;
     }
     public void updateBoard(String title,String contents){
         this.title = title;

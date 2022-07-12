@@ -1,14 +1,12 @@
 package com.walgwalg.backend.provider.service;
 
-import com.walgwalg.backend.entity.Board;
-import com.walgwalg.backend.entity.Likes;
-import com.walgwalg.backend.entity.User;
+import com.walgwalg.backend.entity.Users;
 import com.walgwalg.backend.exception.errors.LoginFailedException;
 import com.walgwalg.backend.exception.errors.NotFoundUserException;
 import com.walgwalg.backend.exception.errors.RegisterFailedException;
 import com.walgwalg.backend.repository.BoardRepository;
 import com.walgwalg.backend.repository.LikesRepository;
-import com.walgwalg.backend.repository.UserRepository;
+import com.walgwalg.backend.repository.UsersRepository;
 import com.walgwalg.backend.web.dto.RequestUser;
 import com.walgwalg.backend.web.dto.ResponseUser;
 import org.junit.jupiter.api.DisplayName;
@@ -18,8 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -28,7 +24,7 @@ public class UserServiceTests {
     @Autowired
     private UserService userService;
     @Autowired
-    private UserRepository userRepository;
+    private UsersRepository usersRepository;
     @Autowired
     private BoardRepository boardRepository;
     @Autowired
@@ -38,11 +34,11 @@ public class UserServiceTests {
     @Transactional
     @DisplayName("회원가입 테스트(실패- 아이디 중복)")
     void registerWhenDuplicatedUseridTest(){
-        User user = User.builder()
+        Users user = Users.builder()
                 .userid("test")
                 .password("test")
                 .build();
-        userRepository.save(user);
+        usersRepository.save(user);
         //회원가입
         RequestUser.register register = RequestUser.register.builder()
                 .userid("test")
@@ -58,12 +54,12 @@ public class UserServiceTests {
     @Transactional
     @DisplayName("회원가입 테스트(실패- 닉네임 중복)")
     void registerWhenDuplicatedNicknameTest(){
-        User user = User.builder()
+        Users user = Users.builder()
                 .userid("userid")
                 .password("test")
                 .nickname("nick")
                 .build();
-        userRepository.save(user);
+        usersRepository.save(user);
         //회원가입
         RequestUser.register register = RequestUser.register.builder()
                 .userid("test")
@@ -87,7 +83,7 @@ public class UserServiceTests {
                 .build();
         userService.register(register);
         System.out.println("회원가입 성공");
-        User user = userRepository.findByUserid("userid");
+        Users user = usersRepository.findByUserid("userid");
         System.out.println(user.getUserid() +" "+user.getNickname()+" "+user.getAddress());
     }
     @Test
@@ -158,18 +154,18 @@ public class UserServiceTests {
     @Transactional
     @DisplayName("회원정보 수정 테스트(실패- 닉네임 중복)")
     void ChangeUserInfoWhenWhenDuplicatedNicknameTest(){
-        User user = User.builder()
+        Users user = Users.builder()
                 .userid("userid")
                 .password("test")
                 .nickname("nick")
                 .build();
-        userRepository.save(user);
-        User user1 = User.builder()
+        usersRepository.save(user);
+        Users user1 = Users.builder()
                 .userid("userid1")
                 .password("test1")
                 .nickname("nick1")
                 .build();
-        userRepository.save(user1);
+        usersRepository.save(user1);
         //회원정보 변경
         RequestUser.changeInfo changeInfoDto = RequestUser.changeInfo.builder()
                 .nickname("nick")
@@ -181,13 +177,13 @@ public class UserServiceTests {
     @Transactional
     @DisplayName("회원정보 수정 테스트(성공)")
     void ChangeUserInfoTest(){
-        User user = User.builder()
+        Users user = Users.builder()
                 .userid("userid")
                 .password("password")
                 .nickname("nick")
                 .address("address")
                 .build();
-        userRepository.save(user);
+        usersRepository.save(user);
         //회원정보 변경
         RequestUser.changeInfo changeInfoDto = RequestUser.changeInfo.builder()
                 .password("changedpassword")
@@ -197,10 +193,10 @@ public class UserServiceTests {
         MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "test2.png",
                 "image/png", "test data".getBytes());
         userService.changeUserInfo("userid",mockMultipartFile,changeInfoDto);
-        User user1 = userRepository.findByUserid("userid");
+        Users user1 = usersRepository.findByUserid("userid");
         System.out.println(user1.getProfile());
         userService.changeUserInfo("userid",mockMultipartFile,changeInfoDto);
-        User user2 = userRepository.findByUserid("userid");
+        Users user2 = usersRepository.findByUserid("userid");
         System.out.println(user2.getProfile());
     }
 
@@ -208,13 +204,13 @@ public class UserServiceTests {
     @Transactional
     @DisplayName("회원정보 조회 테스트(성공)")
     void getUserInfo(){
-        User user = User.builder()
+        Users user = Users.builder()
                 .userid("userid")
                 .password("password")
                 .nickname("nick")
                 .address("address")
                 .build();
-        userRepository.save(user);
+        usersRepository.save(user);
         assertNotNull(userService.getUserInfo("userid"));
     }
 

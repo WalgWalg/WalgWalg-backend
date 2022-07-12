@@ -22,7 +22,7 @@ public class Gps {
     private String longitude;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "walk")
+    @JoinColumn(name = "walk_id")
     private Walk walk;
 
     @Builder

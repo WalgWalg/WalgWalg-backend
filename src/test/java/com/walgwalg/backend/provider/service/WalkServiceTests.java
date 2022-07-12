@@ -1,9 +1,9 @@
 package com.walgwalg.backend.provider.service;
 
-import com.walgwalg.backend.entity.User;
+import com.walgwalg.backend.entity.Users;
 import com.walgwalg.backend.entity.Walk;
 import com.walgwalg.backend.repository.GpsRepository;
-import com.walgwalg.backend.repository.UserRepository;
+import com.walgwalg.backend.repository.UsersRepository;
 import com.walgwalg.backend.repository.WalkRepository;
 import com.walgwalg.backend.web.dto.RequestWalk;
 import com.walgwalg.backend.web.dto.ResponseGps;
@@ -34,7 +34,7 @@ public class WalkServiceTests {
     @Autowired
     WalkService walkService;
     @Autowired
-    UserRepository userRepository;
+    UsersRepository usersRepository;
     @Autowired
     WalkRepository walkRepository;
     @Autowired
@@ -44,13 +44,13 @@ public class WalkServiceTests {
     @Transactional
     @DisplayName("산책 시작 테스트")
     void startWalkTest(){
-        User user = User.builder()
+        Users user = Users.builder()
                 .userid("userid")
                 .password("password")
                 .nickname("nick")
                 .address("address")
                 .build();
-        userRepository.save(user);
+        usersRepository.save(user);
 
         Date date = new Date();
         Map<String, String> walkId = walkService.startWalk("userid", date,"공원","경기도 용인시");
@@ -61,16 +61,16 @@ public class WalkServiceTests {
     @Transactional
     @DisplayName("GPS 등록 테스트")
     void addGpsTest(){
-        User user = User.builder()
+        Users user = Users.builder()
                 .userid("userid")
                 .password("password")
                 .nickname("nick")
                 .address("address")
                 .build();
-        userRepository.save(user);
+        usersRepository.save(user);
         Date date = new Date();
         Walk walk = Walk.builder()
-                .user(user)
+                .users(user)
                 .walkDate(date)
                 .location("광교호수공원")
                 .build();
@@ -83,16 +83,16 @@ public class WalkServiceTests {
     @Transactional
     @DisplayName("GPS 조회 테스트")
     void getGpsTest(){
-        User user = User.builder()
+        Users user = Users.builder()
                 .userid("userid")
                 .password("password")
                 .nickname("nick")
                 .address("address")
                 .build();
-        userRepository.save(user);
+        usersRepository.save(user);
         Date date = new Date();
         Walk walk = Walk.builder()
-                .user(user)
+                .users(user)
                 .walkDate(date)
                 .location("광교호수공원")
                 .build();
@@ -109,16 +109,16 @@ public class WalkServiceTests {
     @Transactional
     @DisplayName("산책 저장 테스트")
     void registerWalk() throws IOException, ParseException {
-        User user = User.builder()
+        Users user = Users.builder()
                 .userid("userid")
                 .password("password")
                 .nickname("nick")
                 .address("address")
                 .build();
-        user = userRepository.save(user);
+        user = usersRepository.save(user);
         Date date = new Date();
         Walk walk = Walk.builder()
-                .user(user)
+                .users(user)
                 .walkDate(date)
                 .location("광교호수공원")
                 .build();
@@ -141,16 +141,16 @@ public class WalkServiceTests {
     @Transactional
     @DisplayName("산책 조회 테스트")
     void listWalk() throws ParseException {
-        User user = User.builder()
+        Users user = Users.builder()
                 .userid("userid")
                 .password("password")
                 .nickname("nick")
                 .address("address")
                 .build();
-        userRepository.save(user);
+        usersRepository.save(user);
         Date date = new Date();
         Walk walk = Walk.builder()
-                .user(user)
+                .users(user)
                 .walkDate(date)
                 .location("광교호수공원")
                 .build();
@@ -175,36 +175,36 @@ public class WalkServiceTests {
     @Transactional
     @DisplayName("산책 삭제 테스트")
     void deleteWalk() throws IOException {
-        User user = User.builder()
+        Users user = Users.builder()
                 .userid("userid")
                 .password("password")
                 .nickname("nick")
                 .address("address")
                 .build();
-        user = userRepository.save(user);
+        user = usersRepository.save(user);
         Date date = new Date();
         Walk walk = Walk.builder()
-                .user(user)
+                .users(user)
                 .walkDate(date)
                 .location("광교호수공원")
                 .build();
         walk = walkRepository.save(walk);
 
         walkService.deleteWalk("userid", walk.getId());
-        assertNull(walkRepository.findByUserAndId(user, walk.getId()));
+        assertNull(walkRepository.findByUsersAndId(user, walk.getId()));
     }
 
     @Test
     @Transactional
     @DisplayName("일별 산책 조회 테스트")
     void getWalkForCalendar(){
-        User user = User.builder()
+        Users user = Users.builder()
                 .userid("userid")
                 .password("password")
                 .build();
-        user = userRepository.save(user);
+        user = usersRepository.save(user);
         Walk walk = Walk.builder()
-                .user(user)
+                .users(user)
                 .walkDate(new Date())
                 .stepCount(1000)
                 .distance(1234)
@@ -214,7 +214,7 @@ public class WalkServiceTests {
                 .build();
         walk = walkRepository.save(walk);
         Walk walk1 = Walk.builder()
-                .user(user)
+                .users(user)
                 .walkDate(new Date())
                 .stepCount(300)
                 .distance(124)
@@ -231,14 +231,14 @@ public class WalkServiceTests {
     @Transactional
     @DisplayName("산책 통계 조회 테스트")
     void getWalkTotalTest() throws ParseException{
-        User user = User.builder()
+        Users user = Users.builder()
                 .userid("userid")
                 .nickname("닉네임")
                 .password("password")
                 .build();
-        user = userRepository.save(user);
+        user = usersRepository.save(user);
         Walk walk = Walk.builder()
-                .user(user)
+                .users(user)
                 .walkDate(Date.from(LocalDateTime.now().minusMonths(2).atZone(ZoneId.systemDefault()).toInstant()))
                 .stepCount(1000)
                 .distance(1234)
@@ -248,7 +248,7 @@ public class WalkServiceTests {
                 .build();
         walk = walkRepository.save(walk);
         Walk walk1 = Walk.builder()
-                .user(user)
+                .users(user)
                 .walkDate(new Date())
                 .stepCount(300)
                 .distance(124)
@@ -259,7 +259,7 @@ public class WalkServiceTests {
         walk1 = walkRepository.save(walk1);
 
         Walk walk2 = Walk.builder()
-                .user(user)
+                .users(user)
                 .walkDate(Date.from(LocalDateTime.now().minusDays(1).atZone(ZoneId.systemDefault()).toInstant()))
                 .stepCount(3009)
                 .distance(124)

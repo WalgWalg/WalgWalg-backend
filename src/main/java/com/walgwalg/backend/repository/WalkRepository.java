@@ -1,7 +1,7 @@
 package com.walgwalg.backend.repository;
 
 import com.walgwalg.backend.entity.Board;
-import com.walgwalg.backend.entity.User;
+import com.walgwalg.backend.entity.Users;
 import com.walgwalg.backend.entity.Walk;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,18 +12,18 @@ import java.util.List;
 public interface WalkRepository extends JpaRepository<Walk, String> {
     Walk findByBoard(Board board);
 
-    Walk findByUserAndId(User user, String id);
+    Walk findByUsersAndId(Users users, String id);
 
-    List<Walk> findByUser(User user);
+    List<Walk> findByUsers(Users users);
 
-    @Query(value = "select w from Walk w inner join w.user where w.user = :user and w.walkDate between :startDate and :endDate")
-    List<Walk> findByUserAndWalkDateBetween(Date startDate, Date endDate, User user);
+    @Query(value = "select w from Walk w inner join w.users where w.users = :users and w.walkDate between :startDate and :endDate")
+    List<Walk> findByUsersAndWalkDateBetween(Date startDate, Date endDate, Users users);
 
-    @Query(value = "select sum(w.stepCount) from Walk w inner join w.user where w.user = :user and w.walkDate between :startDate and :endDate group by w.user")
-    Integer findByStepCount(Date startDate, Date endDate, User user);
+    @Query(value = "select sum(w.stepCount) from Walk w inner join w.users where w.users = :users and w.walkDate between :startDate and :endDate group by w.users")
+    Integer findByStepCount(Date startDate, Date endDate, Users users);
 
-    @Query(value = "select sum(w.distance) from Walk w inner join w.user where w.user = :user and w.walkDate between :startDate and :endDate group by w.user")
-    Integer findByDistance(Date startDate, Date endDate, User user);
+    @Query(value = "select sum(w.distance) from Walk w inner join w.users where w.users = :users and w.walkDate between :startDate and :endDate group by w.users")
+    Integer findByDistance(Date startDate, Date endDate, Users users);
 
     List<Walk> findByAddressStartsWith(String numberAddress);
 }

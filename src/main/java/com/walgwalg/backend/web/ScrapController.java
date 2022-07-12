@@ -3,7 +3,6 @@ package com.walgwalg.backend.web;
 import com.walgwalg.backend.provider.security.JwtAuthToken;
 import com.walgwalg.backend.provider.security.JwtAuthTokenProvider;
 import com.walgwalg.backend.provider.service.ScrapService;
-import com.walgwalg.backend.web.dto.RequestBoard;
 import com.walgwalg.backend.web.dto.ResponseMessage;
 import com.walgwalg.backend.web.dto.ResponseScrap;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;

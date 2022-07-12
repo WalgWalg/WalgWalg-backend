@@ -1,9 +1,7 @@
 package com.walgwalg.backend.web;
 
-import com.walgwalg.backend.entity.User;
 import com.walgwalg.backend.exception.errors.CustomJwtRuntimeException;
 import com.walgwalg.backend.exception.errors.LoginFailedException;
-import com.walgwalg.backend.exception.errors.RegisterFailedException;
 import com.walgwalg.backend.provider.security.JwtAuthToken;
 import com.walgwalg.backend.provider.security.JwtAuthTokenProvider;
 import com.walgwalg.backend.provider.service.UserService;

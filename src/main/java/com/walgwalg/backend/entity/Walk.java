@@ -43,9 +43,9 @@ public class Walk {
     @Column(name = "address")
     private String address;
 
-    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Users.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user; // 유저
+    private Users users; // 유저
 
     @OneToOne(mappedBy = "walk", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Board board; //게시판
@@ -54,9 +54,9 @@ public class Walk {
     private List<Gps> gpsList = new ArrayList<>(); // gps
 
     @Builder
-    public Walk(User user, Date walkDate, Integer stepCount, Integer distance, Integer calorie, String walkTime,
+    public Walk(Users users, Date walkDate, Integer stepCount, Integer distance, Integer calorie, String walkTime,
                 String course, String location, String address){
-        this.user = user;
+        this.users = users;
         this.walkDate = walkDate;
         this.stepCount = stepCount;
         this.distance = distance;
