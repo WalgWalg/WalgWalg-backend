@@ -30,10 +30,10 @@ public class ResponseLike {
                 }
             }
             return MyLike.builder()
-                    .boardId(board.getId())
+                    .boardId(board.getBoardId())
                     .title(board.getTitle())
                     .hashTags(hashtagListDto)
-                    .writeDate(board.getTimestamp())
+                    .writeDate(board.getBoardDate())
                     .likeCount(board.getLikesList().size())
                     .build();
         }

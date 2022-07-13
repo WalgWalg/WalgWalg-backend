@@ -20,10 +20,10 @@ public interface WalkRepository extends JpaRepository<Walk, String> {
     List<Walk> findByUsersAndWalkDateBetween(Date startDate, Date endDate, Users users);
 
     @Query(value = "select sum(w.stepCount) from Walk w inner join w.users where w.users = :users and w.walkDate between :startDate and :endDate group by w.users")
-    Integer findByStepCount(Date startDate, Date endDate, Users users);
+    Long findByStepCount(Date startDate, Date endDate, Users users);
 
     @Query(value = "select sum(w.distance) from Walk w inner join w.users where w.users = :users and w.walkDate between :startDate and :endDate group by w.users")
-    Integer findByDistance(Date startDate, Date endDate, Users users);
+    Long findByDistance(Date startDate, Date endDate, Users users);
 
     List<Walk> findByAddressStartsWith(String numberAddress);
 }

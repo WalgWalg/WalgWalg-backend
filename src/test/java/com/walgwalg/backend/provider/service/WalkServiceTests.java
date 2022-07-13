@@ -123,12 +123,11 @@ public class WalkServiceTests {
                 .location("광교호수공원")
                 .build();
        walk = walkRepository.save(walk);
-
         RequestWalk.registerWalk registerWalk = RequestWalk.registerWalk.builder()
                 .walkId(walk.getId())
-                .step_count(1000)
-                .distance(1234)
-                .calorie(400)
+                .step_count(1000L)
+                .distance(1234L)
+                .calorie(400L)
                 .walkTime("00:10:30")
                 .build();
         MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "test2.png",
@@ -157,9 +156,9 @@ public class WalkServiceTests {
         walk = walkRepository.save(walk);
         RequestWalk.registerWalk registerWalk = RequestWalk.registerWalk.builder()
                 .walkId(walk.getId())
-                .step_count(1000)
-                .distance(1234)
-                .calorie(400)
+                .step_count(1000L)
+                .distance(1234L)
+                .calorie(400L)
                 .walkTime("00:10:30")
                 .build();
         MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "test2.png",
@@ -206,9 +205,9 @@ public class WalkServiceTests {
         Walk walk = Walk.builder()
                 .users(user)
                 .walkDate(new Date())
-                .stepCount(1000)
-                .distance(1234)
-                .calorie(400)
+                .stepCount(1000L)
+                .distance(1234L)
+                .calorie(400L)
                 .walkTime("01:10")
                 .location("광교호수공원")
                 .build();
@@ -216,9 +215,9 @@ public class WalkServiceTests {
         Walk walk1 = Walk.builder()
                 .users(user)
                 .walkDate(new Date())
-                .stepCount(300)
-                .distance(124)
-                .calorie(1230)
+                .stepCount(300L)
+                .distance(124L)
+                .calorie(1230L)
                 .walkTime("01:10")
                 .location("한강공원")
                 .build();
@@ -240,9 +239,9 @@ public class WalkServiceTests {
         Walk walk = Walk.builder()
                 .users(user)
                 .walkDate(Date.from(LocalDateTime.now().minusMonths(2).atZone(ZoneId.systemDefault()).toInstant()))
-                .stepCount(1000)
-                .distance(1234)
-                .calorie(400)
+                .stepCount(1000L)
+                .distance(1234L)
+                .calorie(400L)
                 .walkTime("01:55")
                 .location("광교호수공원")
                 .build();
@@ -250,9 +249,9 @@ public class WalkServiceTests {
         Walk walk1 = Walk.builder()
                 .users(user)
                 .walkDate(new Date())
-                .stepCount(300)
-                .distance(124)
-                .calorie(1230)
+                .stepCount(300L)
+                .distance(124L)
+                .calorie(1230L)
                 .walkTime("01:10")
                 .location("한강공원")
                 .build();
@@ -261,9 +260,9 @@ public class WalkServiceTests {
         Walk walk2 = Walk.builder()
                 .users(user)
                 .walkDate(Date.from(LocalDateTime.now().minusDays(1).atZone(ZoneId.systemDefault()).toInstant()))
-                .stepCount(3009)
-                .distance(124)
-                .calorie(1230)
+                .stepCount(3009L)
+                .distance(124L)
+                .calorie(1230L)
                 .walkTime("01:55")
                 .location("한강공원")
                 .build();

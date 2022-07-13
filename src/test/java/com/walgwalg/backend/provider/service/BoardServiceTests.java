@@ -94,12 +94,12 @@ public class BoardServiceTests {
         Board board = boardRepository.findByUsersAndTitle(user, "게시판 제목");
         //게시판 수정
         RequestBoard.update update = RequestBoard.update.builder()
-                .boardId(board.getId())
+                .boardId(board.getBoardId())
                 .title("수정된 제목")
                 .contents("내용")
                 .build();
         boardService.updateBoard("userid", update);
-        Board board1 = boardRepository.findById(board.getId()).orElseThrow(()->new NotFoundBoardException());
+        Board board1 = boardRepository.findById(board.getBoardId()).orElseThrow(()->new NotFoundBoardException());
         List<HashTag> hashTagList = hashTagRepository.findByBoard(board);
         assertEquals(0, hashTagList.size());
         assertNotNull(boardRepository.findByUsers(user));
@@ -129,7 +129,7 @@ public class BoardServiceTests {
                 .build();
         boardService.registerBoard("userid", requestDto);
         Board board = boardRepository.findByUsersAndTitle(user,"게시판 제목");
-        ResponseBoard.getBoard response = boardService.getBoard(board.getId());
+        ResponseBoard.getBoard response = boardService.getBoard(board.getBoardId());
         assertNotNull(response);
     }
 
@@ -198,7 +198,7 @@ public class BoardServiceTests {
         boardService.registerBoard("userid", requestDto);
         Board board = boardRepository.findByUsersAndTitle(user, "게시판 제목");
         //삭제
-        boardService.deleteBoard("userid", board.getId());
+        boardService.deleteBoard("userid", board.getBoardId());
         assertNull(boardRepository.findByUsersAndTitle(user, "게시판 제목"));
     }
     @Test
@@ -224,9 +224,9 @@ public class BoardServiceTests {
         boardService.registerBoard("userid", requestDto);
         Board board = boardRepository.findByUsersAndTitle(user, "게시판 제목");
         //좋아요
-        likeService.addLike("userid", board.getId());
+        likeService.addLike("userid", board.getBoardId());
         //삭제
-        boardService.deleteBoard("userid", board.getId());
+        boardService.deleteBoard("userid", board.getBoardId());
         //해당 게시판의 좋아요도 다 삭제되어야 함!
         assertNull(boardRepository.findByUsersAndTitle(user, "게시판 제목"));
         assertNull(likesRepository.findByUsersAndBoard(user, board));
@@ -265,7 +265,7 @@ public class BoardServiceTests {
         boardService.registerBoard("userid", requestDto);
         Board board = boardRepository.findByUsersAndTitle(user, "게시판 제목");
         //좋아요
-        likeService.addLike("userid", board.getId());
+        likeService.addLike("userid", board.getBoardId());
         //게시판 등록2
         Walk walk2 = Walk.builder()
                 .users(user)
@@ -280,8 +280,8 @@ public class BoardServiceTests {
         boardService.registerBoard("userid", requestDto2);
         Board board2 = boardRepository.findByUsersAndTitle(user, "게시판 제목2");
         //좋아요
-        likeService.addLike("userid", board2.getId());
-        likeService.addLike("userid1", board2.getId());
+        likeService.addLike("userid", board2.getBoardId());
+        likeService.addLike("userid1", board2.getBoardId());
         List<ResponseBoard.top> list = boardService.getBoardTop();
         for (ResponseBoard.top response : list){
             System.out.println(response.getParkName());
@@ -315,7 +315,7 @@ public class BoardServiceTests {
         boardService.registerBoard("userid", requestDto);
         Board board = boardRepository.findByUsersAndTitle(user, "게시판 제목");
         //좋아요
-        likeService.addLike("userid", board.getId());
+        likeService.addLike("userid", board.getBoardId());
         //게시판 등록2
         Walk walk2 = Walk.builder()
                 .users(user1)
@@ -330,8 +330,8 @@ public class BoardServiceTests {
         boardService.registerBoard("userid1", requestDto2);
         Board board2 = boardRepository.findByUsersAndTitle(user1, "게시판 제목2");
         //좋아요
-        likeService.addLike("userid", board2.getId());
-        likeService.addLike("userid1", board2.getId());
+        likeService.addLike("userid", board2.getBoardId());
+        likeService.addLike("userid1", board2.getBoardId());
         List<ResponseBoard.list> list =  boardService.getAllBoard();
         for(ResponseBoard.list response : list){
             System.out.println(response.getDate());

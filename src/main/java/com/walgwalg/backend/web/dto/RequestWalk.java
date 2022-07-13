@@ -41,11 +41,11 @@ public class RequestWalk {
         @NotNull(message = "산책번호가 비어있음")
         private String walkId;
         @NotNull(message = "걸음수가 비어있음")
-        private Integer step_count;
+        private Long step_count;
         @NotNull(message = "거리가 비어있음")
-        private Integer distance;
+        private Long distance;
         @NotNull(message = "칼로리가 비어있음")
-        private Integer calorie;
+        private Long calorie;
         @NotNull(message = "산책시간이 비어있음")
         private String walkTime;
     }

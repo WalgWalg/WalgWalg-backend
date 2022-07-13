@@ -30,10 +30,10 @@ public class ResponseScrap {
                 }
             }
             return MyScrap.builder()
-                    .boardId(board.getId())
+                    .boardId(board.getBoardId())
                     .title(board.getTitle())
                     .hashTags(hashtagListDto)
-                    .writeDate(board.getTimestamp())
+                    .writeDate(board.getBoardDate())
                     .scrapCount(board.getScrapList().size())
                     .build();
         }

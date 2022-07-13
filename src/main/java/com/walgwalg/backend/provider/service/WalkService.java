@@ -87,8 +87,8 @@ public class WalkService implements WalkServiceInterface {
     }
     @Override
     @Transactional
-    public void registerWalk(String userid,MultipartFile course,String walkId, Integer stepCount,
-                             Integer distance, Integer calorie, String walkTime) throws ParseException {
+    public void registerWalk(String userid,MultipartFile course,String walkId, Long stepCount,
+                             Long distance, Long calorie, String walkTime) throws ParseException {
         Users user = usersRepository.findByUserid(userid);
         if(user == null){
             throw new NotFoundUserException();

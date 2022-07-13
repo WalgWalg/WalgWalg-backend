@@ -18,7 +18,7 @@ import java.util.UUID;
 public class Board {
     @Id
     @Column(name = "board_id")
-    private String id = UUID.randomUUID().toString();
+    private String boardId = UUID.randomUUID().toString();
 
     @Column(name = "title")
     private String title; //제목

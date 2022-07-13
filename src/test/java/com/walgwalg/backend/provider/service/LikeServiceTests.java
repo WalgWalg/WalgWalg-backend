@@ -47,7 +47,7 @@ public class LikeServiceTests {
         user.addBoard(board);
 
         //좋아요
-        likeService.addLike("userid", board.getId());
+        likeService.addLike("userid", board.getBoardId());
         assertNotNull(likesRepository.findByUsers(usersRepository.findByUserid("userid")));
     }
     @Test
@@ -76,7 +76,7 @@ public class LikeServiceTests {
         user.addLikes(likes);
         board.addLikes(likes);
         //좋아요 삭제
-        likeService.deleteLikeBoard("userid",board.getId());
+        likeService.deleteLikeBoard("userid",board.getBoardId());
         assertNull(likesRepository.findByUsersAndBoard(user, board));
     }
 

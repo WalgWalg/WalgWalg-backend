@@ -132,7 +132,7 @@ public class BoardService implements BoardServiceInterface {
         if(user == null){ //유저가 없을 경우
             throw new NotFoundUserException();
         }
-        Board board = boardRepository.findByIdAndUsers(boardId, user);
+        Board board = boardRepository.findByBoardIdAndUsers(boardId, user);
         if(board == null){
             throw new NotFoundBoardException();
         }

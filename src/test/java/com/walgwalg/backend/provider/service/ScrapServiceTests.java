@@ -47,7 +47,7 @@ public class ScrapServiceTests {
         user.addBoard(board);
 
         //스크랩
-        scrapService.addScrap("userid", board.getId());
+        scrapService.addScrap("userid", board.getBoardId());
         assertNotNull(scrapRepository.findByUsers(usersRepository.findByUserid("userid")));
     }
 
@@ -106,7 +106,7 @@ public class ScrapServiceTests {
         user.addScrap(scrap);
         board.addScrap(scrap);
         //스크랩 삭제
-        scrapService.deleteScrap("userid",board.getId());
+        scrapService.deleteScrap("userid",board.getBoardId());
         assertNull(scrapRepository.findByUsersAndBoard(user, board));
     }
 }

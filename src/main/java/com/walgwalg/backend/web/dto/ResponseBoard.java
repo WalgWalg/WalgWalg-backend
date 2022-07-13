@@ -20,9 +20,9 @@ public class ResponseBoard {
         private String contents;
         private List<String> hashTags;
         //산책 정보
-        private Integer step_count;
-        private Integer distance;
-        private Integer calorie;
+        private Long step_count;
+        private Long distance;
+        private Long calorie;
         private String course;
         private String location;
         //작성자
@@ -39,8 +39,8 @@ public class ResponseBoard {
                 }
             }
             return getBoard.builder()
-                    .boardId(board.getId())
-                    .date(board.getTimestamp())
+                    .boardId(board.getBoardId())
+                    .date(board.getBoardDate())
                     .title(board.getTitle())
                     .contents(board.getContents())
                     .hashTags(hashTagList)
@@ -74,10 +74,10 @@ public class ResponseBoard {
                 }
             }
             return list.builder()
-                    .boardId(board.getId())
+                    .boardId(board.getBoardId())
                     .title(board.getTitle())
                     .image(board.getWalk().getCourse())
-                    .date(board.getTimestamp())
+                    .date(board.getBoardDate())
                     .hashTags(hashTagList)
                     .likes(board.getLikesList().size())
                     .build();

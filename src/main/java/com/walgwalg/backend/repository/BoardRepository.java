@@ -13,7 +13,7 @@ import java.util.List;
 public interface BoardRepository extends JpaRepository<Board, String> {
     Board findByUsersAndTitle(Users users, String title);
     List<Board> findByUsers(Users users);
-    Board findByIdAndUsers(String id ,Users users);
+    Board findByBoardIdAndUsers(String id ,Users users);
 
     @Query("select b from Board b join b.likesList l group by b.id order by l.size desc")
     List<Board> findTop5ByOrderByLikesListDesc(Pageable pageable);

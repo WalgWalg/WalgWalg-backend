@@ -14,9 +14,9 @@ public class ResponseWalk {
     public static class list {
         private String id;
         private Date walkDate;
-        private Integer stepCount;
-        private Integer distance;
-        private Integer calorie;
+        private Long stepCount;
+        private Long distance;
+        private Long calorie;
         private String walkTime;
         private String course;
         private String location;
@@ -24,8 +24,8 @@ public class ResponseWalk {
     @Builder
     @Data
     public static class calendar{
-        private Integer stepCount; //걸음수
-        private Integer distance;
+        private Long stepCount; //걸음수
+        private Long distance;
         private String walkTime;
 
     }
@@ -33,8 +33,8 @@ public class ResponseWalk {
     @Builder
     @Data
     public static class total{
-        public Integer stepCount; //걸음수
-        private Integer distance;
+        public Long stepCount; //걸음수
+        private Long distance;
         private String walkTime;
     }
 
