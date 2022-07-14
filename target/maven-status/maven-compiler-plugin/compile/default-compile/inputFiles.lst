@@ -4,7 +4,6 @@ C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\core\security\role\Ro
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\core\service\BoardServiceInterface.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\core\service\LikeServiceInterface.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\entity\Likes.java
-C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\entity\User.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\WalgWalgApplication.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\configuration\S3Config.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\dto\RequestPark.java
@@ -17,6 +16,7 @@ C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\configuration\JwtConf
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\dto\RequestWalk.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\entity\HashTag.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\provider\security\JwtAuthTokenProvider.java
+C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\entity\Users.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\provider\service\ParkService.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\UserController.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\exception\errors\NotFoundBoardException.java
@@ -49,6 +49,7 @@ C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\dto\ResponsePark.
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\dto\ParkInfo.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\repository\HashTagRepository.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\provider\service\S3Service.java
+C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\repository\UsersRepository.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\exception\errors\DuplicatedWalkException.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\dto\ResponseBoard.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\dto\ResponseScrap.java
@@ -69,6 +70,5 @@ C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\dto\ResponseMessa
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\exception\errors\DuplicatedScrapException.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\core\security\AuthToken.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\dto\RequestUser.java
-C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\repository\UserRepository.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\core\service\UserServiceInterface.java
 C:\Users\koony\WalgWalg\src\main\java\com\walgwalg\backend\web\dto\ResponseUser.java

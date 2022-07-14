@@ -21,15 +21,14 @@ com\walgwalg\backend\exception\errors\NotFoundScrapException.class
 com\walgwalg\backend\core\service\LikeServiceInterface.class
 com\walgwalg\backend\web\BoardController.class
 com\walgwalg\backend\web\dto\ResponseHashtag$Hashtag.class
+com\walgwalg\backend\entity\Users$UsersBuilder.class
 com\walgwalg\backend\core\service\BoardServiceInterface.class
 com\walgwalg\backend\exception\errors\DuplicatedParkException.class
 com\walgwalg\backend\web\dto\ResponseUser$login$loginBuilder.class
 com\walgwalg\backend\web\dto\ResponseWalk.class
-com\walgwalg\backend\entity\User$UserBuilder.class
 com\walgwalg\backend\entity\Gps$GpsBuilder.class
 com\walgwalg\backend\provider\service\ParkService.class
 com\walgwalg\backend\provider\service\WalkService.class
-com\walgwalg\backend\entity\User.class
 com\walgwalg\backend\configuration\InterceptorConfig.class
 com\walgwalg\backend\web\dto\RequestBoard$update.class
 com\walgwalg\backend\web\dto\ResponsePark$getAll$getAllBuilder.class
@@ -59,6 +58,7 @@ com\walgwalg\backend\web\dto\RequestWalk.class
 com\walgwalg\backend\web\dto\ResponseGps.class
 com\walgwalg\backend\entity\Park.class
 com\walgwalg\backend\provider\service\UserService.class
+com\walgwalg\backend\entity\Users.class
 com\walgwalg\backend\repository\WalkRepository.class
 com\walgwalg\backend\web\dto\ResponseBoard$getBoard.class
 com\walgwalg\backend\web\dto\ResponseWalk$list.class
@@ -66,6 +66,7 @@ com\walgwalg\backend\web\dto\ParkInfo.class
 com\walgwalg\backend\web\dto\RequestBoard$update$updateBuilder.class
 com\walgwalg\backend\entity\Likes.class
 com\walgwalg\backend\web\dto\ResponseUser$Token$TokenBuilder.class
+com\walgwalg\backend\repository\UsersRepository.class
 com\walgwalg\backend\web\dto\ResponseBoard.class
 com\walgwalg\backend\web\UserController.class
 com\walgwalg\backend\web\dto\ResponseBoard$list$listBuilder.class
@@ -105,7 +106,6 @@ com\walgwalg\backend\web\dto\RequestUser$login$loginBuilder.class
 com\walgwalg\backend\exception\errors\LoginFailedException.class
 com\walgwalg\backend\provider\service\BoardService.class
 com\walgwalg\backend\exception\errors\NotFoundUserException.class
-com\walgwalg\backend\repository\UserRepository.class
 com\walgwalg\backend\configuration\JwtConfig.class
 com\walgwalg\backend\exception\errors\NotFoundWalkException.class
 com\walgwalg\backend\core\service\UserServiceInterface.class
